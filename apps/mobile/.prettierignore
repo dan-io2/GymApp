@@ -1,0 +1,8 @@
+.expo/
+coverage/
+dist/
+web-build/
+android/
+ios/
+node_modules/
+tsconfig.tsbuildinfo

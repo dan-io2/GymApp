@@ -1,0 +1,24 @@
+{
+  "name": "gymapp",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.16.0",
+  "scripts": {
+    "dev": "pnpm --filter @gymapp/mobile start",
+    "mobile:dev-client": "pnpm --filter @gymapp/mobile dev-client",
+    "mobile:start": "pnpm --filter @gymapp/mobile start",
+    "mobile:ios": "pnpm --filter @gymapp/mobile ios",
+    "mobile:android": "pnpm --filter @gymapp/mobile android",
+    "mobile:web": "pnpm --filter @gymapp/mobile web",
+    "lint": "pnpm --filter @gymapp/mobile lint && pnpm --filter @gymapp/nutrition lint",
+    "type-check": "pnpm --filter @gymapp/mobile type-check && pnpm --filter @gymapp/nutrition type-check",
+    "format": "pnpm --filter @gymapp/mobile format && pnpm --filter @gymapp/nutrition format",
+    "format:check": "pnpm --filter @gymapp/mobile format:check && pnpm --filter @gymapp/nutrition format:check",
+    "test": "pnpm --filter @gymapp/mobile test && pnpm --filter @gymapp/nutrition test",
+    "nutrition:lint": "pnpm --filter @gymapp/nutrition lint",
+    "nutrition:type-check": "pnpm --filter @gymapp/nutrition type-check",
+    "nutrition:format": "pnpm --filter @gymapp/nutrition format",
+    "nutrition:format:check": "pnpm --filter @gymapp/nutrition format:check",
+    "nutrition:test": "pnpm --filter @gymapp/nutrition test"
+  }
+}

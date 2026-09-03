@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "GymApp",
+    "slug": "gymapp",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "gymapp",
+    "userInterfaceStyle": "automatic",
+    "plugins": [
+      "expo-router",
+      "expo-splash-screen",
+      [
+        "expo-camera",
+        {
+          "barcodeScannerEnabled": true,
+          "cameraPermission": "Allow GymApp to use your camera to scan food barcodes.",
+          "recordAudioAndroid": false
+        }
+      ]
+    ],
+    "ios": {
+      "bundleIdentifier": "com.dannyreyes.gymapp",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": ["android.permission.CAMERA"]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0cf0f0bf-2c4e-44f3-aed8-783c06cb820a"
+      }
+    },
+    "owner": "dan.io"
+  }
+}

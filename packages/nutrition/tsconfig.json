@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "exactOptionalPropertyTypes": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "outDir": "dist",
+    "strict": true,
+    "target": "ES2022",
+    "typeRoots": ["../../apps/mobile/node_modules/@types"],
+    "types": ["jest"]
+  },
+  "include": ["src"]
+}
