@@ -336,32 +336,86 @@ task before implementation.
 
 ---
 
-## TASK-015 — Weight Progress
+## TASK-014 — EAS Distribution + Standalone GymApp Builds
 
-Status: BLOCKED BY TASK-004
+Status: READY
 
-Implement:
+EAS Build profiles are configured for development, preview/internal
+distribution, and production/store distribution. Preview builds are intended
+to run independently of Metro, Expo Go, the developer Mac, and the local
+network while continuing to use the deployed Supabase project. EAS Update
+readiness is configured with app-version runtime compatibility, but no OTA
+update is published.
 
-- weight entries
-- history
-- trend visualization
-- goal progress
-
----
-
-## TASK-016 — Image Upload Pipeline
-
-Status: BLOCKED BY TASK-003
-
-Implement secure food-image upload using Supabase Storage.
-
-No AI analysis yet.
+The Expo app remains authoritative at `apps/mobile`, and root build scripts
+delegate into that workspace so Expo dependencies and autolinking resolve from
+the correct project root. Apple signing, EAS authentication, device
+registration, and EAS environment
+variable setup remain explicit user/deployment steps. This task does not
+submit to TestFlight or the App Store and does not add product features.
 
 ---
 
-## TASK-017 — AI Food Recognition
+## Pre-release Nutrition Correctness Audit (TASK-015 assignment)
 
-Status: BLOCKED BY TASK-016 AND TASK-009
+Status: COMPLETED
+
+The nutrition pipeline audit verified the calculation, provider normalization,
+serving, diary aggregation, dashboard progress, snapshot, saved-meal, and
+date-boundary paths. Deterministic regression coverage was added for provider
+mass-serving conversion, fractional serving scaling, and clamped progress.
+The existing `TASK-015 — Weight Progress` roadmap item remains unchanged below
+because this repository already uses that identifier for the future progress
+feature.
+
+---
+
+## TASK-015.5 — Progress Foundation, Check-Ins, Recaps, and Reminders
+
+Status: COMPLETED
+
+Implemented canonical-kg weight check-ins with one official record per local
+day, owner RLS, an atomic upsert RPC, unit-aware history, graph-ready points,
+calendar-safe weekly status, tracked-day aggregation, current/longest streaks,
+partial-month consistency, total tracked days, month/year calendar data, and
+deterministic monthly recap facts.
+
+Added device-local custom reminders with contextual permission, daily or
+selected-weekday recurrence, edit/enable/disable/delete/reconciliation, and
+duplicate schedule prevention. Added minimal functional Progress, Reminders,
+and Custom Food screens. Nutrition calculations and provider normalization
+remain frozen.
+
+---
+
+## TASK-016 — Full UI/UX Design System and Polish
+
+Status: COMPLETED
+
+Implemented the dark-first GymApp design system, shared mobile primitives,
+inset Today/Diary/Progress/More navigation, responsive primary workflows,
+food detail and scanner polish, custom-food and saved-meal presentation,
+progress chart/calendar/year activity views, reminder/settings polish, and
+accessible semantic feedback. Nutrition calculations, provider normalization,
+food identities, serving behavior, and persistence contracts remain frozen.
+See `docs/DESIGN_SYSTEM.md` for the presentation conventions.
+
+### TASK-016.1 — Visual Identity Refinement and Physical iOS Graph Fix
+
+Status: COMPLETED
+
+Expanded the dark-first design system with restrained nutrition, weight,
+analytics, carbohydrate, fat, attention, and destructive accent families.
+Refined Today, Diary, Progress, and More surfaces while preserving their
+existing information architecture and frozen domain behavior. Replaced the
+weight graph's unlinked native SVG view with a dependency-free React Native
+line-and-point renderer, including zero-, one-, and multi-point coverage.
+
+---
+
+## Post-v1 — AI Food Recognition And Expansion
+
+Status: DEFERRED
 
 Implement server-side OpenAI image analysis.
 
@@ -370,6 +424,10 @@ Return structured food candidates.
 Attempt to match candidates to verified nutrition records.
 
 Require user confirmation.
+
+Also deferred: Apple Health/HealthKit, widgets, workout tracking, water
+tracking, AI coaching, social/community, shareable recap images, remote push
+campaigns, friend challenges, and advanced achievements/gamification.
 
 ---
 

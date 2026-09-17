@@ -5,6 +5,7 @@ import { SettingsScreen } from '../SettingsScreen';
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     back: jest.fn(),
+    push: jest.fn(),
   }),
 }));
 
@@ -29,7 +30,8 @@ describe('SettingsScreen', () => {
 
     render(<SettingsScreen />);
 
-    expect(screen.getByText('Signed in as test@example.com.')).toBeTruthy();
+    expect(screen.getByText('Signed in')).toBeTruthy();
+    expect(screen.getByText('test@example.com')).toBeTruthy();
 
     fireEvent.press(screen.getByRole('button', { name: 'Sign out' }));
 

@@ -259,6 +259,14 @@ export function createSavedMealService(client: SupabaseClient<Database>): SavedM
       });
 
       if (error) {
+        if (__DEV__) {
+          console.info('[GymApp saved meal rpc]', {
+            code: error.code,
+            message: error.message,
+            operation: 'log_saved_meal',
+          });
+        }
+
         throw new SavedMealError("We couldn't log this saved meal. Please try again.", error.code);
       }
 

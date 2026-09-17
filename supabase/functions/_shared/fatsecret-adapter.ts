@@ -84,9 +84,11 @@ export function normalizeFatSecretFood(food: FatSecretFood): NormalizedFoodResul
     return null;
   }
 
-  const servingOptions = asArray(food.servings?.serving)
-    .map(normalizeServing)
-    .filter((serving): serving is NormalizedServingOption => serving !== null);
+  const servingOptions = dedupeServingOptions(
+    asArray(food.servings?.serving)
+      .map((serving) => normalizeServing(externalId, serving))
+      .filter((serving): serving is NormalizedServingOption => serving !== null),
+  );
 
   const defaultServing = chooseDefaultServing(servingOptions);
 
@@ -118,26 +120,81 @@ export function normalizeFatSecretFood(food: FatSecretFood): NormalizedFoodResul
   };
 }
 
-function normalizeServing(serving: FatSecretServing): NormalizedServingOption | null {
-  const id = normalizeText(serving.serving_id) ?? normalizeText(serving.serving_description);
+function normalizeServing(
+  foodId: string,
+  serving: FatSecretServing,
+): NormalizedServingOption | null {
+  const providerServingId = normalizeText(serving.serving_id);
   const nutrition = readNutrition(serving);
 
-  if (!id || !nutrition) {
+  if (!nutrition) {
     return null;
   }
 
   const metricAmount = readPositiveNumber(serving.metric_serving_amount);
   const metricUnit = normalizeServingUnit(serving.metric_serving_unit);
+  const servingDescription = normalizeText(serving.serving_description);
 
   return {
-    id,
-    servingDescription: normalizeText(serving.serving_description),
+    id: createServingIdentity({
+      foodId,
+      providerServingId,
+      servingDescription,
+      metricAmount,
+      metricUnit,
+      nutrition,
+    }),
+    servingDescription,
     servingSize: metricAmount,
     servingUnit: metricUnit,
     servingBasis: getServingBasis(metricAmount, metricUnit),
     ...nutrition,
     isDefault: serving.is_default === 1 || serving.is_default === '1',
   };
+}
+
+function createServingIdentity({
+  foodId,
+  providerServingId,
+  servingDescription,
+  metricAmount,
+  metricUnit,
+  nutrition,
+}: {
+  foodId: string;
+  providerServingId: string | null;
+  servingDescription: string | null;
+  metricAmount: number | null;
+  metricUnit: string | null;
+  nutrition: NutritionValues;
+}): string {
+  return [
+    'fatsecret',
+    foodId,
+    providerServingId ?? '',
+    servingDescription ?? '',
+    metricAmount ?? '',
+    metricUnit ?? '',
+    nutrition.calories,
+    nutrition.proteinG,
+    nutrition.carbsG,
+    nutrition.fatG,
+  ]
+    .join('|')
+    .toLowerCase();
+}
+
+function dedupeServingOptions(options: NormalizedServingOption[]): NormalizedServingOption[] {
+  const seen = new Set<string>();
+
+  return options.filter((option) => {
+    if (seen.has(option.id)) {
+      return false;
+    }
+
+    seen.add(option.id);
+    return true;
+  });
 }
 
 function chooseDefaultServing(

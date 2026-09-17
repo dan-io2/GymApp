@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { colors, spacing, typography } from '@/design/theme';
+
 export function OnboardingPlaceholderScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -21,29 +23,25 @@ export function OnboardingPlaceholderScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
-    gap: 14,
+    gap: spacing.sm,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: spacing.xl,
   },
   kicker: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '700',
+    ...typography.caption,
+    color: colors.accent,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 34,
-    fontWeight: '800',
-    lineHeight: 40,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
   },
   description: {
-    color: '#526057',
-    fontSize: 16,
-    lineHeight: 24,
+    ...typography.body,
+    color: colors.textSecondary,
   },
 });

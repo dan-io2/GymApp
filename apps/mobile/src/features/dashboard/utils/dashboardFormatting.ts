@@ -4,7 +4,7 @@ import type { ActivityLevel, GoalType } from '@gymapp/nutrition';
 import type { ActiveNutritionGoal, UnitSystem } from '../types/dashboardTypes';
 
 export function formatCalories(calories: number): string {
-  return Math.round(calories).toLocaleString('en-US');
+  return (Number.isFinite(calories) ? Math.round(calories) : 0).toLocaleString('en-US');
 }
 
 export function formatGramTarget(grams: number): string {
@@ -127,7 +127,9 @@ export function getMacroCalorieShare(
 }
 
 function formatDecimal(value: number, maximumFractionDigits = 1): string {
-  return Number(value.toFixed(maximumFractionDigits)).toLocaleString('en-US', {
+  const normalized = Number.isFinite(value) && !Object.is(value, -0) ? value : 0;
+
+  return Number(normalized.toFixed(maximumFractionDigits)).toLocaleString('en-US', {
     maximumFractionDigits,
   });
 }

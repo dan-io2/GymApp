@@ -1,81 +1,99 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-const ACTIONS = ['Find Food', "Today's Diary", 'Scan Barcode'] as const;
+import { AppIcon, type AppIconName, SectionHeader } from '@/design/components';
+import { accents, colors, controlHeights, radii, spacing, typography } from '@/design/theme';
 
 type QuickActionsProps = {
-  onDiary: () => void;
+  onCustomFood: () => void;
   onFindFood: () => void;
+  onSavedMeals: () => void;
   onScanBarcode: () => void;
 };
 
-export function QuickActions({ onDiary, onFindFood, onScanBarcode }: QuickActionsProps) {
+const ACTIONS: {
+  color: string;
+  icon: AppIconName;
+  key: keyof QuickActionsProps;
+  label: string;
+  muted: string;
+}[] = [
+  {
+    color: accents.nutrition.foreground,
+    icon: 'search-outline',
+    key: 'onFindFood',
+    label: 'Find Food',
+    muted: accents.nutrition.muted,
+  },
+  {
+    color: accents.weight.foreground,
+    icon: 'barcode-outline',
+    key: 'onScanBarcode',
+    label: 'Scan Barcode',
+    muted: accents.weight.muted,
+  },
+  {
+    color: accents.analytics.foreground,
+    icon: 'create-outline',
+    key: 'onCustomFood',
+    label: 'Custom Food',
+    muted: accents.analytics.muted,
+  },
+  {
+    color: accents.carbohydrate.foreground,
+    icon: 'restaurant-outline',
+    key: 'onSavedMeals',
+    label: 'Saved Meals',
+    muted: accents.carbohydrate.muted,
+  },
+];
+
+export function QuickActions(props: QuickActionsProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Quick Actions</Text>
+      <SectionHeader subtitle="Log in fewer taps" title="Quick add" />
       <View style={styles.actions}>
-        {ACTIONS.map((action) => {
-          const isFindFood = action === 'Find Food';
-          const isDiary = action === "Today's Diary";
-
-          return (
-            <Pressable
-              accessibilityHint={
-                isFindFood
-                  ? 'Open food search and manual lookup'
-                  : isDiary
-                    ? "Open today's food diary"
-                    : 'Open camera barcode scanner'
-              }
-              accessibilityLabel={action}
-              accessibilityRole="button"
-              key={action}
-              onPress={isFindFood ? onFindFood : isDiary ? onDiary : onScanBarcode}
-              style={({ pressed }) => [styles.action, pressed && styles.pressed]}
-            >
-              <Text style={styles.actionTitle}>{action}</Text>
-              <Text style={styles.actionMeta}>Open</Text>
-            </Pressable>
-          );
-        })}
+        {ACTIONS.map((action) => (
+          <Pressable
+            accessibilityLabel={action.label}
+            accessibilityRole="button"
+            key={action.label}
+            onPress={props[action.key]}
+            style={({ pressed }) => [styles.action, pressed && styles.pressed]}
+          >
+            <View style={[styles.icon, { backgroundColor: action.muted }]}>
+              <AppIcon color={action.color} name={action.icon} />
+            </View>
+            <Text style={styles.actionTitle}>{action.label}</Text>
+          </Pressable>
+        ))}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 12,
-  },
-  sectionTitle: {
-    color: '#17211b',
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  actions: {
-    gap: 10,
-  },
+  container: { gap: spacing.sm },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   action: {
     alignItems: 'center',
-    backgroundColor: '#eaf2ec',
-    borderColor: '#cfe0d4',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
+    flexBasis: '48%',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    minHeight: 54,
-    paddingHorizontal: 16,
+    gap: spacing.sm,
+    minHeight: controlHeights.large,
+    paddingHorizontal: spacing.sm,
   },
-  actionTitle: {
-    color: '#17211b',
-    fontSize: 16,
-    fontWeight: '900',
+  icon: {
+    alignItems: 'center',
+    backgroundColor: colors.accentMuted,
+    borderRadius: radii.medium,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
   },
-  actionMeta: {
-    color: '#1f8a5b',
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  pressed: {
-    opacity: 0.72,
-  },
+  actionTitle: { ...typography.caption, color: colors.textPrimary, flexShrink: 1 },
+  pressed: { backgroundColor: colors.surfacePressed },
 });

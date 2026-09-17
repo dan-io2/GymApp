@@ -102,10 +102,10 @@ export function calculateFoodLogTotalsFromServing(
   assertPositiveQuantity(quantity);
 
   return {
-    calories: roundNutrition(log.servingCalories * quantity),
-    proteinG: roundNutrition(log.servingProteinG * quantity),
-    carbsG: roundNutrition(log.servingCarbsG * quantity),
-    fatG: roundNutrition(log.servingFatG * quantity),
+    calories: log.servingCalories * quantity,
+    proteinG: log.servingProteinG * quantity,
+    carbsG: log.servingCarbsG * quantity,
+    fatG: log.servingFatG * quantity,
     fiberG: multiplyNullableNutrition(log.servingFiberG, quantity),
     sugarG: multiplyNullableNutrition(log.servingSugarG, quantity),
     sodiumMg: multiplyNullableNutrition(log.servingSodiumMg, quantity),
@@ -144,10 +144,10 @@ export function calculateFoodLogTotalsFromPortion(
 export function aggregateDailyNutrition(logs: FoodLog[]): NutritionTotals {
   return logs.reduce<NutritionTotals>(
     (totals, log) => ({
-      caloriesConsumed: roundNutrition(totals.caloriesConsumed + log.calories),
-      proteinConsumedG: roundNutrition(totals.proteinConsumedG + log.proteinG),
-      carbsConsumedG: roundNutrition(totals.carbsConsumedG + log.carbsG),
-      fatConsumedG: roundNutrition(totals.fatConsumedG + log.fatG),
+      caloriesConsumed: totals.caloriesConsumed + log.calories,
+      proteinConsumedG: totals.proteinConsumedG + log.proteinG,
+      carbsConsumedG: totals.carbsConsumedG + log.carbsG,
+      fatConsumedG: totals.fatConsumedG + log.fatG,
     }),
     {
       caloriesConsumed: 0,
@@ -287,11 +287,11 @@ export function getDefaultMealType(date = new Date()): MealType {
 }
 
 export function formatQuantity(value: number): string {
-  return Number.isInteger(value) ? value.toString() : Number(value.toFixed(2)).toString();
+  return formatFiniteNumber(value, 2);
 }
 
 export function formatNutritionValue(value: number): string {
-  return Number.isInteger(value) ? value.toString() : Number(value.toFixed(1)).toString();
+  return formatFiniteNumber(value, 1);
 }
 
 export function calculateTotalServingAmount({
@@ -301,15 +301,21 @@ export function calculateTotalServingAmount({
   quantity: number;
   servingSize: number | null;
 }): number | null {
-  return servingSize === null ? null : roundNutrition(servingSize * quantity);
+  return servingSize === null ? null : servingSize * quantity;
 }
 
 function multiplyNullableNutrition(value: number | null, quantity: number): number | null {
-  return value === null ? null : roundNutrition(value * quantity);
+  return value === null ? null : value * quantity;
 }
 
-function roundNutrition(value: number): number {
-  return Number(value.toFixed(2));
+function formatFiniteNumber(value: number, maximumFractionDigits: number): string {
+  if (!Number.isFinite(value)) {
+    return '0';
+  }
+
+  const normalized = Object.is(value, -0) ? 0 : value;
+
+  return Number(normalized.toFixed(maximumFractionDigits)).toString();
 }
 
 function createMacroProgress(
@@ -318,7 +324,9 @@ function createMacroProgress(
   remaining: number,
   overage: number,
 ): MacroProgress {
-  const percentage = target > 0 ? roundNutrition((consumed / target) * 100) : 0;
+  const percentage =
+    target > 0 && Number.isFinite(consumed) ? Math.round((consumed / target) * 10000) / 100 : 0;
+  const ratio = target > 0 && Number.isFinite(consumed) ? consumed / target : 0;
 
   return {
     consumed,
@@ -326,6 +334,6 @@ function createMacroProgress(
     remaining,
     overage,
     percentage,
-    progressRatio: Math.min(1, target > 0 ? consumed / target : 0),
+    progressRatio: Math.max(0, Math.min(1, ratio)),
   };
 }

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { colors, radii, spacing, typography } from '@/design/theme';
 import { AuthLoadingScreen } from '@/features/auth/components/AuthLoadingScreen';
 import { AuthMessage } from '@/features/auth/components/AuthMessage';
 import { useAuth } from '@/features/auth/context/AuthContext';
@@ -355,61 +356,58 @@ function formatGoalLabel(goalType: string) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
   },
   keyboardView: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    gap: 24,
+    gap: spacing.xl,
     justifyContent: 'space-between',
-    padding: 24,
+    padding: spacing.xl,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
   },
   step: {
-    gap: 24,
+    gap: spacing.xl,
   },
   kicker: {
-    color: '#1f8a5b',
-    fontSize: 15,
-    fontWeight: '800',
-    marginBottom: 10,
+    ...typography.caption,
+    color: colors.accent,
+    marginBottom: spacing.sm,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 34,
-    fontWeight: '800',
-    lineHeight: 40,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
   },
   description: {
-    color: '#526057',
-    fontSize: 17,
-    lineHeight: 26,
-    marginTop: 14,
+    ...typography.body,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
   },
   fields: {
-    gap: 12,
+    gap: spacing.sm,
   },
   inlineInputs: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.sm,
   },
   inlineInput: {
     flex: 1,
   },
   actions: {
-    gap: 12,
+    gap: spacing.sm,
   },
   results: {
-    borderColor: '#d5ddd5',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
-    padding: 16,
+    padding: spacing.md,
   },
   resultRow: {
     alignItems: 'center',
@@ -418,17 +416,15 @@ const styles = StyleSheet.create({
     minHeight: 38,
   },
   resultLabel: {
-    color: '#526057',
-    fontSize: 15,
-    fontWeight: '700',
+    ...typography.secondary,
+    color: colors.textSecondary,
   },
   resultValue: {
-    color: '#17211b',
-    fontSize: 17,
-    fontWeight: '800',
+    ...typography.cardTitle,
+    color: colors.textPrimary,
   },
   divider: {
-    backgroundColor: '#d5ddd5',
+    backgroundColor: colors.borderSubtle,
     height: 1,
     marginVertical: 10,
   },

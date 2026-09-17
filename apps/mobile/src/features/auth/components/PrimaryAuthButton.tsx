@@ -1,5 +1,7 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
 
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
+
 type PrimaryAuthButtonProps = {
   label: string;
   loadingLabel: string;
@@ -25,7 +27,7 @@ export function PrimaryAuthButton({
         pressed && !isLoading && styles.pressed,
       ]}
     >
-      {isLoading ? <ActivityIndicator color="#ffffff" /> : null}
+      {isLoading ? <ActivityIndicator color={colors.accentText} /> : null}
       <Text style={styles.label}>{isLoading ? loadingLabel : label}</Text>
     </Pressable>
   );
@@ -34,13 +36,13 @@ export function PrimaryAuthButton({
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: '#1f7a54',
-    borderRadius: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radii.medium,
     flexDirection: 'row',
-    gap: 10,
+    gap: spacing.xs,
     justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.md,
   },
   disabled: {
     opacity: 0.72,
@@ -49,8 +51,7 @@ const styles = StyleSheet.create({
     opacity: 0.88,
   },
   label: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '800',
+    ...typography.bodyStrong,
+    color: colors.accentText,
   },
 });

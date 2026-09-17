@@ -150,10 +150,10 @@ export function calculatePortionNutrition({
     servingEquivalent,
     normalizedAmount: totalNormalizedAmount,
     normalizedUnit: normalized.unit,
-    calories: roundNutrition(food.calories * servingEquivalent),
-    proteinG: roundNutrition(food.proteinG * servingEquivalent),
-    carbsG: roundNutrition(food.carbsG * servingEquivalent),
-    fatG: roundNutrition(food.fatG * servingEquivalent),
+    calories: food.calories * servingEquivalent,
+    proteinG: food.proteinG * servingEquivalent,
+    carbsG: food.carbsG * servingEquivalent,
+    fatG: food.fatG * servingEquivalent,
     fiberG: multiplyNullableNutrition(food.fiberG, servingEquivalent),
     sugarG: multiplyNullableNutrition(food.sugarG, servingEquivalent),
     sodiumMg: multiplyNullableNutrition(food.sodiumMg, servingEquivalent),
@@ -465,9 +465,5 @@ function foodFromLog(log: FoodLog): Food {
 }
 
 function multiplyNullableNutrition(value: number | null, multiplier: number): number | null {
-  return value === null ? null : roundNutrition(value * multiplier);
-}
-
-function roundNutrition(value: number): number {
-  return Number(value.toFixed(2));
+  return value === null ? null : value * multiplier;
 }

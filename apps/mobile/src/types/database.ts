@@ -13,7 +13,9 @@ export type Database = {
           body_fat_percentage: number | null;
           created_at: string;
           id: string;
+          local_date: string;
           recorded_at: string;
+          updated_at: string;
           user_id: string;
           weight_kg: number;
         };
@@ -21,7 +23,9 @@ export type Database = {
           body_fat_percentage?: number | null;
           created_at?: string;
           id?: string;
+          local_date?: string;
           recorded_at?: string;
+          updated_at?: string;
           user_id: string;
           weight_kg: number;
         };
@@ -29,7 +33,9 @@ export type Database = {
           body_fat_percentage?: number | null;
           created_at?: string;
           id?: string;
+          local_date?: string;
           recorded_at?: string;
+          updated_at?: string;
           user_id?: string;
           weight_kg?: number;
         };
@@ -505,6 +511,23 @@ export type Database = {
           to: 'nutrition_goals';
           isOneToOne: false;
           isSetofReturn: true;
+        };
+      };
+      upsert_weight_check_in: {
+        Args: {
+          p_local_date: string;
+          p_recorded_at: string;
+          p_weight_kg: number;
+        };
+        Returns: {
+          body_fat_percentage: number | null;
+          created_at: string;
+          id: string;
+          local_date: string;
+          recorded_at: string;
+          updated_at: string;
+          user_id: string;
+          weight_kg: number;
         };
       };
       log_saved_meal: {

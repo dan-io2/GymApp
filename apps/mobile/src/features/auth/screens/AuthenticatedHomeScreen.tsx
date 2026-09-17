@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
+
 import { useAuth } from '../context/AuthContext';
 import { mapAuthError } from '../services/authErrors';
 import { AuthMessage } from '../components/AuthMessage';
@@ -66,45 +68,40 @@ export function AuthenticatedHomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
-    gap: 24,
+    gap: spacing.xl,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: spacing.xl,
   },
   kicker: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '700',
-    marginBottom: 10,
+    ...typography.caption,
+    color: colors.accent,
+    marginBottom: spacing.sm,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 34,
-    fontWeight: '800',
-    lineHeight: 40,
-    marginBottom: 12,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   description: {
-    color: '#526057',
-    fontSize: 16,
-    lineHeight: 24,
+    ...typography.body,
+    color: colors.textSecondary,
   },
   signOutButton: {
     alignItems: 'center',
-    backgroundColor: '#17211b',
-    borderRadius: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radii.medium,
     justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.md,
   },
   signOutText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '800',
+    ...typography.bodyStrong,
+    color: colors.accentText,
   },
   disabled: {
     opacity: 0.72,

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Alert,
   Pressable,
@@ -12,6 +12,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 
+import { AppIcon, ProgressBar } from '@/design/components';
+import { accents, colors, controlHeights, radii, spacing, typography } from '@/design/theme';
 import { AuthMessage } from '@/features/auth/components/AuthMessage';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { DashboardLoading } from '@/features/dashboard/components/DashboardLoading';
@@ -37,13 +39,13 @@ import {
 export function DiaryScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const today = useMemo(() => new Date(), []);
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
   const dashboard = useDashboardData(user?.id);
   const library = useFoodLibrary({ userId: user?.id });
   const [reloggingLogId, setReloggingLogId] = useState<string | null>(null);
   const activeGoal = dashboard.data?.activeGoal ?? null;
   const diary = useDailyDiary({
-    date: today,
+    date: selectedDate,
     targets: activeGoal
       ? {
           dailyCalories: activeGoal.dailyCalories,
@@ -80,27 +82,59 @@ export function DiaryScreen() {
       >
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.kicker}>Today</Text>
+            <Text style={styles.kicker}>{isToday(selectedDate) ? 'Today' : 'Diary'}</Text>
             <Text accessibilityRole="header" style={styles.title}>
-              {formatDiaryDate(today)}
+              {formatDiaryDate(selectedDate)}
             </Text>
           </View>
           <View style={styles.headerActions}>
             <Pressable
               accessibilityRole="button"
+              accessibilityLabel="Go Home"
               onPress={() => router.replace('/')}
               style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
             >
-              <Text style={styles.headerButtonText}>Go Home</Text>
+              <AppIcon color={colors.textSecondary} name="home-outline" />
             </Pressable>
             <Pressable
+              accessibilityLabel="Saved Meals"
               accessibilityRole="button"
               onPress={() => router.push('/saved-meals')}
               style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
             >
-              <Text style={styles.headerButtonText}>Saved Meals</Text>
+              <AppIcon color={colors.textSecondary} name="restaurant-outline" />
             </Pressable>
           </View>
+        </View>
+
+        <View style={styles.dateNavigation}>
+          <Pressable
+            accessibilityLabel="Previous day"
+            accessibilityRole="button"
+            onPress={() => setSelectedDate((current) => addDays(current, -1))}
+            style={styles.dateButton}
+          >
+            <AppIcon color={colors.textPrimary} name="chevron-back" />
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setSelectedDate(new Date())}
+            style={styles.todayButton}
+          >
+            <Text style={styles.todayText}>
+              {isToday(selectedDate) ? 'Today' : 'Return to today'}
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityLabel="Next day"
+            accessibilityRole="button"
+            accessibilityState={{ disabled: isToday(selectedDate) }}
+            disabled={isToday(selectedDate)}
+            onPress={() => setSelectedDate((current) => addDays(current, 1))}
+            style={[styles.dateButton, isToday(selectedDate) && styles.disabled]}
+          >
+            <AppIcon color={colors.textPrimary} name="chevron-forward" />
+          </Pressable>
         </View>
 
         {diary.isLoading || dashboard.isLoading ? <DashboardLoading /> : null}
@@ -189,6 +223,8 @@ function ProgressLine({
   progress: NutritionProgress[keyof NutritionProgress];
   unit: string;
 }) {
+  const accent = progressAccents[label];
+
   return (
     <View style={styles.progressLine}>
       <View style={styles.progressHeader}>
@@ -197,10 +233,12 @@ function ProgressLine({
           {formatNutritionValue(progress.consumed)} / {formatNutritionValue(progress.target)} {unit}
         </Text>
       </View>
-      <View style={styles.progressTrack}>
-        <View style={[styles.progressFill, { width: `${progress.progressRatio * 100}%` }]} />
-      </View>
-      <Text style={styles.remainingText}>
+      <ProgressBar
+        color={accent}
+        overTarget={progress.overage > 0}
+        progress={progress.progressRatio}
+      />
+      <Text style={[styles.remainingText, progress.overage > 0 && styles.overText]}>
         {progress.overage > 0
           ? `${formatNutritionValue(progress.overage)} ${unit} over`
           : `${formatNutritionValue(progress.remaining)} ${unit} remaining`}
@@ -208,6 +246,13 @@ function ProgressLine({
     </View>
   );
 }
+
+const progressAccents: Record<string, string> = {
+  Calories: accents.nutrition.foreground,
+  Protein: accents.nutrition.foreground,
+  Carbs: accents.carbohydrate.foreground,
+  Fat: accents.fat.foreground,
+};
 
 function MealSection({
   deletingLogId,
@@ -286,7 +331,7 @@ function MealSection({
                 accessibilityLabel={`Saved meal name for ${group.label}`}
                 onChangeText={setSavedMealName}
                 placeholder="Meal name"
-                placeholderTextColor="#7a877d"
+                placeholderTextColor={colors.textMuted}
                 style={styles.editInput}
                 value={savedMealName}
               />
@@ -369,6 +414,7 @@ function DiaryLogItem({
   saving: boolean;
 }) {
   const [editing, setEditing] = useState(false);
+  const [actionsVisible, setActionsVisible] = useState(false);
   const [itemQuantityText, setItemQuantityText] = useState(formatPortionAmount(log.itemQuantity));
   const [quantityText, setQuantityText] = useState(formatPortionAmount(log.portionAmount));
   const [portionUnit, setPortionUnit] = useState(log.portionUnit);
@@ -400,7 +446,18 @@ function DiaryLogItem({
               : ''}
           </Text>
         </View>
-        <Text style={styles.logCalories}>{formatNutritionValue(log.calories)} kcal</Text>
+        <View style={styles.logAside}>
+          <Text style={styles.logCalories}>{formatNutritionValue(log.calories)} kcal</Text>
+          <Pressable
+            accessibilityLabel={`Actions for ${log.foodName}`}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: actionsVisible }}
+            onPress={() => setActionsVisible((current) => !current)}
+            style={({ pressed }) => [styles.moreButton, pressed && styles.pressed]}
+          >
+            <AppIcon color={colors.textSecondary} name="ellipsis-horizontal" size={20} />
+          </Pressable>
+        </View>
       </View>
 
       {editing ? (
@@ -515,39 +572,50 @@ function DiaryLogItem({
         </View>
       ) : null}
 
-      <View style={styles.logActions}>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => setEditing((current) => !current)}
-          style={({ pressed }) => [styles.smallButton, pressed && styles.pressed]}
-        >
-          <Text style={styles.smallButtonText}>Edit</Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          disabled={relogging}
-          onPress={onLogAgain}
-          style={({ pressed }) => [
-            styles.smallButton,
-            relogging && styles.disabled,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Text style={styles.smallButtonText}>{relogging ? 'Logging' : 'Log Again'}</Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          disabled={deleting}
-          onPress={onDelete}
-          style={({ pressed }) => [
-            styles.smallButton,
-            deleting && styles.disabled,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Text style={styles.smallButtonText}>{deleting ? 'Deleting' : 'Delete'}</Text>
-        </Pressable>
-      </View>
+      {actionsVisible ? (
+        <View style={styles.logActions}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              setEditing((current) => !current);
+              setActionsVisible(false);
+            }}
+            style={({ pressed }) => [styles.smallButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.smallButtonText}>Edit</Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            disabled={relogging}
+            onPress={() => {
+              setActionsVisible(false);
+              onLogAgain();
+            }}
+            style={({ pressed }) => [
+              styles.smallButton,
+              relogging && styles.disabled,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.smallButtonText}>{relogging ? 'Logging' : 'Log Again'}</Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            disabled={deleting}
+            onPress={() => {
+              setActionsVisible(false);
+              onDelete();
+            }}
+            style={({ pressed }) => [
+              styles.smallButton,
+              deleting && styles.disabled,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.deleteButtonText}>{deleting ? 'Deleting' : 'Delete'}</Text>
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -560,61 +628,91 @@ function formatDiaryDate(date: Date): string {
   }).format(date);
 }
 
+function addDays(date: Date, amount: number): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + amount);
+  return next;
+}
+
+function isToday(date: Date): boolean {
+  const today = new Date();
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
+}
+
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
     flex: 1,
   },
   content: {
-    gap: 18,
-    padding: 20,
+    gap: spacing.md,
+    paddingBottom: 112,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
   },
   headerRow: {
-    gap: 14,
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: spacing.sm,
+    justifyContent: 'space-between',
   },
   headerActions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: spacing.xs,
   },
   kicker: {
-    color: '#1f8a5b',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.accent,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 31,
-    fontWeight: '900',
-    lineHeight: 38,
-    marginTop: 6,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
+    marginTop: spacing.xxs,
   },
   headerButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.card,
     borderWidth: 1,
-    flexGrow: 1,
     justifyContent: 'center',
-    minHeight: 46,
-    paddingHorizontal: 14,
+    height: controlHeights.compact,
+    width: controlHeights.compact,
   },
-  headerButtonText: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '900',
+  dateNavigation: { alignItems: 'center', flexDirection: 'row', gap: spacing.xs },
+  dateButton: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: radii.medium,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
   },
+  todayButton: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: radii.medium,
+    flex: 1,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  todayText: { ...typography.caption, color: colors.textSecondary },
   progressCard: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
+    backgroundColor: accents.nutrition.surface,
+    borderColor: accents.nutrition.muted,
+    borderRadius: radii.card,
     borderWidth: 1,
-    gap: 16,
-    padding: 18,
+    gap: spacing.md,
+    padding: spacing.md,
   },
   progressLine: {
-    gap: 8,
+    gap: spacing.xs,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -622,52 +720,39 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   progressLabel: {
-    color: '#526057',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   progressValue: {
-    color: '#17211b',
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  progressTrack: {
-    backgroundColor: '#e7ede8',
-    borderRadius: 5,
-    height: 10,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    backgroundColor: '#1f8a5b',
-    borderRadius: 5,
-    height: 10,
+    ...typography.caption,
+    color: colors.textPrimary,
   },
   remainingText: {
-    color: '#617067',
-    fontSize: 13,
-    fontWeight: '700',
+    ...typography.micro,
+    color: colors.textMuted,
   },
+  overText: { color: colors.warning },
   mealList: {
-    gap: 14,
+    gap: spacing.sm,
   },
   mealActions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: spacing.xs,
   },
   saveMealBox: {
-    backgroundColor: '#f7f8f3',
-    borderRadius: 8,
-    gap: 10,
-    padding: 12,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.card,
+    gap: spacing.xs,
+    padding: spacing.sm,
   },
   mealCard: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
-    gap: 14,
-    padding: 16,
+    gap: spacing.sm,
+    padding: spacing.md,
   },
   mealHeader: {
     alignItems: 'center',
@@ -675,45 +760,44 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mealTitle: {
-    color: '#17211b',
-    fontSize: 20,
-    fontWeight: '900',
+    ...typography.sectionTitle,
+    color: colors.textPrimary,
   },
   mealTotal: {
-    color: '#1f8a5b',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.bodyStrong,
+    color: colors.accent,
   },
   emptyMeal: {
     gap: 12,
   },
   emptyText: {
-    color: '#617067',
-    fontSize: 15,
-    fontWeight: '700',
+    ...typography.secondary,
+    color: colors.textMuted,
   },
   secondaryButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceInteractive,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
-    minHeight: 42,
-    paddingHorizontal: 14,
+    minHeight: controlHeights.compact,
+    paddingHorizontal: spacing.sm,
   },
   secondaryButtonText: {
-    color: '#1f7a54',
-    fontSize: 14,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textPrimary,
   },
   logList: {
-    gap: 12,
+    gap: spacing.sm,
   },
   logItem: {
-    backgroundColor: '#f7f8f3',
-    borderRadius: 8,
-    gap: 12,
-    padding: 12,
+    backgroundColor: colors.surface,
+    borderLeftColor: accents.nutrition.muted,
+    borderLeftWidth: 2,
+    borderRadius: radii.medium,
+    gap: spacing.sm,
+    padding: spacing.sm,
   },
   logTopRow: {
     flexDirection: 'row',
@@ -725,37 +809,45 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   logName: {
-    color: '#17211b',
-    fontSize: 16,
-    fontWeight: '900',
+    ...typography.bodyStrong,
+    color: colors.textPrimary,
   },
   logMeta: {
-    color: '#617067',
-    fontSize: 13,
-    fontWeight: '700',
+    ...typography.caption,
+    color: colors.textMuted,
   },
   logCalories: {
-    color: '#17211b',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.bodyStrong,
+    color: colors.textPrimary,
+  },
+  logAside: { alignItems: 'flex-end', gap: spacing.xxs },
+  moreButton: {
+    alignItems: 'center',
+    borderRadius: radii.medium,
+    height: controlHeights.compact,
+    justifyContent: 'center',
+    width: controlHeights.compact,
   },
   logActions: {
+    backgroundColor: colors.surfaceInteractive,
+    borderRadius: radii.medium,
     flexDirection: 'row',
     gap: 8,
+    padding: spacing.xxs,
   },
   smallButton: {
     alignItems: 'center',
-    backgroundColor: '#eaf2ec',
-    borderRadius: 8,
+    borderRadius: radii.medium,
+    flex: 1,
     justifyContent: 'center',
-    minHeight: 38,
-    paddingHorizontal: 12,
+    minHeight: controlHeights.compact,
+    paddingHorizontal: spacing.sm,
   },
   smallButtonText: {
-    color: '#1f7a54',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
+  deleteButtonText: { ...typography.caption, color: colors.danger },
   editBox: {
     gap: 10,
   },
@@ -766,8 +858,8 @@ const styles = StyleSheet.create({
   },
   mealPill: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     flexBasis: '48%',
     flexGrow: 1,
@@ -775,27 +867,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mealPillSelected: {
-    backgroundColor: '#1f8a5b',
-    borderColor: '#1f8a5b',
+    backgroundColor: colors.accentMuted,
+    borderColor: colors.accent,
   },
   mealPillText: {
-    color: '#526057',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   mealPillTextSelected: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   editInput: {
-    backgroundColor: '#ffffff',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
-    color: '#17211b',
-    fontSize: 17,
-    fontWeight: '900',
-    minHeight: 46,
-    paddingHorizontal: 12,
+    ...typography.bodyStrong,
+    color: colors.textPrimary,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.sm,
   },
   editActions: {
     flexDirection: 'row',
@@ -803,16 +893,15 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     alignItems: 'center',
-    backgroundColor: '#1f8a5b',
-    borderRadius: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radii.medium,
     flex: 1,
     justifyContent: 'center',
-    minHeight: 42,
+    minHeight: controlHeights.compact,
   },
   saveButtonText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.accentText,
   },
   disabled: {
     opacity: 0.55,

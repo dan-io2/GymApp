@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { colors, spacing, typography } from '@/design/theme';
+
 export function DashboardLoading() {
   return (
     <View accessibilityLabel="Loading nutrition dashboard" style={styles.container}>
@@ -16,25 +18,24 @@ export function DashboardLoading() {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 14,
+    gap: spacing.sm,
   },
   kicker: {
-    color: '#1f8a5b',
-    fontSize: 14,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textMuted,
     textTransform: 'uppercase',
   },
   heroBlock: {
-    backgroundColor: '#e2e9e4',
+    backgroundColor: colors.surfaceRaised,
     borderRadius: 8,
     height: 168,
   },
   row: {
     flexDirection: 'row',
-    gap: 10,
+    gap: spacing.xs,
   },
   smallBlock: {
-    backgroundColor: '#e8eee9',
+    backgroundColor: colors.surface,
     borderRadius: 8,
     flex: 1,
     height: 114,

@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { colors, radii, spacing, typography } from '@/design/theme';
+
 type AuthMessageProps = {
   message: string;
   tone: 'error' | 'success';
@@ -20,27 +22,26 @@ export function AuthMessage({ message, tone }: AuthMessageProps) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
+    borderRadius: radii.medium,
     borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
   },
   errorContainer: {
-    backgroundColor: '#fff4f2',
-    borderColor: '#f3b5ad',
+    backgroundColor: colors.dangerMuted,
+    borderColor: colors.danger,
   },
   successContainer: {
-    backgroundColor: '#edf8f1',
-    borderColor: '#a8d9ba',
+    backgroundColor: colors.successMuted,
+    borderColor: colors.success,
   },
   text: {
-    fontSize: 14,
-    lineHeight: 20,
+    ...typography.secondary,
   },
   errorText: {
-    color: '#8a1f13',
+    color: colors.danger,
   },
   successText: {
-    color: '#1d6b43',
+    color: colors.success,
   },
 });

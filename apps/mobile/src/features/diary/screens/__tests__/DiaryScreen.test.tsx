@@ -120,6 +120,7 @@ describe('DiaryScreen', () => {
   it('edits quantity and meal type from a diary row', async () => {
     render(<DiaryScreen />);
 
+    fireEvent.press(screen.getByRole('button', { name: 'Actions for Jasmine Thai Fragrant Rice' }));
     fireEvent.press(screen.getByRole('button', { name: 'Edit' }));
     fireEvent.press(screen.getByRole('button', { name: 'Snacks' }));
     fireEvent.changeText(screen.getByLabelText('Quantity for Jasmine Thai Fragrant Rice'), '2');
@@ -142,6 +143,7 @@ describe('DiaryScreen', () => {
   it('asks for confirmation before deleting a row', () => {
     render(<DiaryScreen />);
 
+    fireEvent.press(screen.getByRole('button', { name: 'Actions for Jasmine Thai Fragrant Rice' }));
     fireEvent.press(screen.getByRole('button', { name: 'Delete' }));
 
     expect(Alert.alert).toHaveBeenCalledWith(
@@ -154,6 +156,7 @@ describe('DiaryScreen', () => {
   it('logs a previous diary row again and refreshes the diary', async () => {
     render(<DiaryScreen />);
 
+    fireEvent.press(screen.getByRole('button', { name: 'Actions for Jasmine Thai Fragrant Rice' }));
     fireEvent.press(screen.getByRole('button', { name: 'Log Again' }));
 
     await waitFor(() => {

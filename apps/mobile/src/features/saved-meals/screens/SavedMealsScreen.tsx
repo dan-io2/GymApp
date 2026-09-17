@@ -3,6 +3,8 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { EmptyState } from '@/design/components';
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
 import { AuthMessage } from '@/features/auth/components/AuthMessage';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import {
@@ -54,10 +56,11 @@ export function SavedMealsScreen() {
         ) : null}
 
         {!library.isLoading && library.savedMeals.length === 0 ? (
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>No saved meals yet</Text>
-            <Text style={styles.mutedText}>Save a meal from today&apos;s diary first.</Text>
-          </View>
+          <EmptyState
+            icon="restaurant-outline"
+            message="Save a meal from your diary to log the whole combination again in one tap."
+            title="No saved meals yet"
+          />
         ) : null}
 
         {library.savedMeals.map((meal) => (
@@ -114,6 +117,7 @@ function SavedMealCard({
   const [mealType, setMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('breakfast');
   const [multiplier, setMultiplier] = useState<SavedMealMultiplier>(1);
   const [name, setName] = useState(meal.name);
+  const [isLogging, setIsLogging] = useState(false);
   const totals = meal.items.reduce(
     (current, item) => ({
       calories: current.calories + item.calories,
@@ -236,12 +240,27 @@ function SavedMealCard({
 
           <Pressable
             accessibilityRole="button"
-            onPress={() => {
-              void onLog({ mealId: meal.id, mealType, multiplier });
+            disabled={isLogging}
+            onPress={async () => {
+              if (isLogging) {
+                return;
+              }
+
+              setIsLogging(true);
+
+              try {
+                await onLog({ mealId: meal.id, mealType, multiplier });
+              } finally {
+                setIsLogging(false);
+              }
             }}
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              isLogging && styles.disabled,
+              pressed && !isLogging && styles.pressed,
+            ]}
           >
-            <Text style={styles.primaryButtonText}>Log Meal</Text>
+            <Text style={styles.primaryButtonText}>{isLogging ? 'Logging Meal' : 'Log Meal'}</Text>
           </Pressable>
 
           <Pressable
@@ -259,194 +278,185 @@ function SavedMealCard({
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
     flex: 1,
   },
   content: {
-    gap: 18,
-    padding: 20,
+    gap: spacing.md,
+    padding: spacing.lg,
   },
   backButton: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 44,
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.md,
   },
   backButtonText: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textPrimary,
   },
   kicker: {
-    color: '#1f8a5b',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.accent,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 36,
-    fontWeight: '900',
-    lineHeight: 42,
-    marginTop: 8,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
+    marginTop: spacing.xxs,
   },
   card: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
-    gap: 12,
-    padding: 16,
+    gap: spacing.sm,
+    padding: spacing.md,
   },
   cardHeader: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.sm,
     justifyContent: 'space-between',
   },
   cardTitleWrap: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xxs,
   },
   cardTitle: {
-    color: '#17211b',
-    fontSize: 22,
-    fontWeight: '900',
+    ...typography.sectionTitle,
+    color: colors.textPrimary,
   },
   mutedText: {
-    color: '#617067',
-    fontSize: 14,
-    fontWeight: '700',
-    lineHeight: 20,
+    ...typography.secondary,
+    color: colors.textMuted,
   },
   expandText: {
-    color: '#1f8a5b',
-    fontSize: 14,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.accent,
   },
   detail: {
-    gap: 12,
+    gap: spacing.sm,
   },
   input: {
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    ...typography.body,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
-    color: '#17211b',
-    fontSize: 17,
-    fontWeight: '800',
-    minHeight: 52,
-    paddingHorizontal: 14,
+    color: colors.textPrimary,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.sm,
   },
   secondaryButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceInteractive,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 44,
-    paddingHorizontal: 14,
+    paddingHorizontal: spacing.sm,
   },
   secondaryButtonText: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textPrimary,
   },
   items: {
-    gap: 10,
+    gap: spacing.xs,
   },
   itemRow: {
-    backgroundColor: '#f7f8f3',
-    borderRadius: 8,
-    gap: 10,
-    padding: 12,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.medium,
+    gap: spacing.xs,
+    padding: spacing.sm,
   },
   itemText: {
-    gap: 4,
+    gap: spacing.xxs,
   },
   itemName: {
-    color: '#17211b',
-    fontSize: 16,
-    fontWeight: '900',
+    ...typography.bodyStrong,
+    color: colors.textPrimary,
   },
   ghostButton: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: '#eaf2ec',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceInteractive,
+    borderRadius: radii.medium,
     justifyContent: 'center',
     minHeight: 40,
-    paddingHorizontal: 14,
+    paddingHorizontal: spacing.sm,
   },
   ghostButtonText: {
-    color: '#1f7a54',
-    fontSize: 14,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   optionGroup: {
-    gap: 8,
+    gap: spacing.xs,
   },
   optionLabel: {
-    color: '#526057',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.micro,
+    color: colors.textMuted,
     textTransform: 'uppercase',
   },
   optionGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: spacing.xs,
   },
   optionPill: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 40,
     paddingHorizontal: 12,
   },
   optionPillSelected: {
-    backgroundColor: '#123026',
-    borderColor: '#123026',
+    backgroundColor: colors.accentMuted,
+    borderColor: colors.accent,
   },
   optionPillText: {
-    color: '#1f7a54',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   optionPillTextSelected: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#1f8a5b',
-    borderRadius: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radii.medium,
     justifyContent: 'center',
-    minHeight: 50,
-    paddingHorizontal: 14,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.sm,
   },
   primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '900',
+    ...typography.bodyStrong,
+    color: colors.accentText,
+  },
+  disabled: {
+    opacity: 0.55,
   },
   dangerButton: {
     alignItems: 'center',
-    borderColor: '#efbbb5',
-    borderRadius: 8,
+    backgroundColor: colors.dangerMuted,
+    borderColor: colors.danger,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 46,
-    paddingHorizontal: 14,
+    paddingHorizontal: spacing.sm,
   },
   dangerButtonText: {
-    color: '#a44337',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.danger,
   },
   pressed: {
     opacity: 0.82,

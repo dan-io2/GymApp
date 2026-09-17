@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
+
 type OnboardingButtonProps = {
   label: string;
   onPress: () => void;
@@ -41,28 +43,27 @@ export function OnboardingButton({
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: radii.medium,
     justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.md,
   },
   primary: {
-    backgroundColor: '#1f8a5b',
+    backgroundColor: colors.accent,
   },
   secondary: {
-    backgroundColor: 'transparent',
-    borderColor: '#c8d2c8',
+    backgroundColor: colors.surfaceInteractive,
+    borderColor: colors.borderStrong,
     borderWidth: 1,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '800',
+    ...typography.bodyStrong,
   },
   primaryLabel: {
-    color: '#ffffff',
+    color: colors.accentText,
   },
   secondaryLabel: {
-    color: '#17211b',
+    color: colors.textPrimary,
   },
   disabled: {
     opacity: 0.58,

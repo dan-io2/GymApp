@@ -1,5 +1,7 @@
 import { StyleSheet, Text, TextInput, View, type KeyboardTypeOptions } from 'react-native';
 
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
+
 type OnboardingTextInputProps = {
   accessibilityHint?: string;
   keyboardType?: KeyboardTypeOptions;
@@ -31,7 +33,8 @@ export function OnboardingTextInput({
           keyboardType={keyboardType}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor="#8a968d"
+          placeholderTextColor={colors.textMuted}
+          selectionColor={colors.accent}
           style={styles.input}
           value={value}
         />
@@ -43,31 +46,30 @@ export function OnboardingTextInput({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
+    gap: spacing.xs,
   },
   label: {
-    color: '#17211b',
-    fontSize: 15,
-    fontWeight: '800',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   inputRow: {
     alignItems: 'center',
-    borderColor: '#d5ddd5',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     flexDirection: 'row',
-    minHeight: 56,
-    paddingHorizontal: 14,
+    minHeight: controlHeights.large,
+    paddingHorizontal: spacing.sm,
   },
   input: {
-    color: '#17211b',
+    ...typography.body,
+    color: colors.textPrimary,
     flex: 1,
-    fontSize: 17,
-    minHeight: 54,
+    minHeight: controlHeights.regular,
   },
   suffix: {
-    color: '#526057',
-    fontSize: 15,
-    fontWeight: '700',
+    ...typography.caption,
+    color: colors.textMuted,
   },
 });

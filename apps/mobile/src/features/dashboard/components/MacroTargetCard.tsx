@@ -1,5 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
+import { AppCard, ProgressBar } from '@/design/components';
+import { accents, colors, spacing, typography } from '@/design/theme';
 import type { MacroProgress } from '@/features/diary/types/foodTypes';
 
 import {
@@ -14,7 +16,8 @@ type MacroTargetCardProps = {
 };
 
 export function MacroTargetCard({ label, progress }: MacroTargetCardProps) {
-  const clampedProgressRatio = getClampedProgressRatio(progress.progressRatio);
+  const overTarget = progress.overage > 0;
+  const palette = macroPalettes[label];
   const statusText = formatProgressStatus({
     overage: progress.overage,
     remaining: progress.remaining,
@@ -22,84 +25,51 @@ export function MacroTargetCard({ label, progress }: MacroTargetCardProps) {
   });
 
   return (
-    <View
+    <AppCard
       accessibilityLabel={`${label} consumed ${formatMacroGramsWithUnit(progress.consumed)} of ${formatMacroGramsWithUnit(progress.target)}, ${statusText}`}
-      style={[styles.card, progress.overage > 0 && styles.cardOverTarget]}
+      style={[
+        styles.card,
+        { backgroundColor: palette.surface, borderTopColor: palette.foreground },
+      ]}
     >
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>{formatMacroGramsWithUnit(progress.consumed)}</Text>
-      <Text style={styles.target}>of {formatMacroGramsWithUnit(progress.target)}</Text>
-      <View style={styles.barTrack}>
-        <View
-          style={[
-            styles.barFill,
-            progress.overage > 0 && styles.barFillOverTarget,
-            { width: `${clampedProgressRatio * 100}%` },
-          ]}
-          testID={`${label.toLowerCase()}-progress-fill`}
-        />
-      </View>
-      <Text style={[styles.share, progress.overage > 0 && styles.shareOverTarget]}>
-        {statusText}
+      <Text style={[styles.label, { color: palette.foreground }]}>{label}</Text>
+      <Text adjustsFontSizeToFit minimumFontScale={0.72} numberOfLines={1} style={styles.value}>
+        {formatMacroGramsWithUnit(progress.consumed)}
       </Text>
-    </View>
+      <Text style={styles.target}>of {formatMacroGramsWithUnit(progress.target)}</Text>
+      <ProgressBar
+        color={palette.foreground}
+        overTarget={overTarget}
+        progress={getClampedProgressRatio(progress.progressRatio)}
+        testID={`${label.toLowerCase()}-progress-fill`}
+      />
+      <Text style={[styles.status, overTarget && styles.over]}>{statusText}</Text>
+    </AppCard>
   );
 }
 
+const macroPalettes = {
+  Protein: accents.nutrition,
+  Carbs: accents.carbohydrate,
+  Fat: accents.fat,
+};
+
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
-    borderWidth: 1,
+    borderTopWidth: 2,
     flex: 1,
-    minWidth: 96,
-    padding: 14,
+    gap: spacing.xs,
+    minWidth: 0,
+    padding: spacing.sm,
   },
-  cardOverTarget: {
-    backgroundColor: '#f4fbf6',
-    borderColor: '#a7d9bc',
-  },
-  label: {
-    color: '#526057',
-    fontSize: 14,
-    fontWeight: '800',
-  },
+  label: typography.caption,
   value: {
-    color: '#17211b',
-    fontSize: 24,
-    fontWeight: '900',
-    marginTop: 8,
+    ...typography.metric,
+    color: colors.textPrimary,
+    fontVariant: ['tabular-nums'],
+    marginTop: spacing.xxs,
   },
-  target: {
-    color: '#617067',
-    fontSize: 12,
-    fontWeight: '800',
-    marginTop: 2,
-  },
-  barTrack: {
-    backgroundColor: '#e7ede8',
-    borderRadius: 4,
-    height: 8,
-    marginTop: 14,
-    overflow: 'hidden',
-  },
-  barFill: {
-    backgroundColor: '#1f8a5b',
-    borderRadius: 4,
-    height: 8,
-  },
-  barFillOverTarget: {
-    backgroundColor: '#55b978',
-  },
-  share: {
-    color: '#617067',
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 8,
-  },
-  shareOverTarget: {
-    color: '#1f7a54',
-    fontWeight: '800',
-  },
+  target: { ...typography.micro, color: colors.textMuted },
+  status: { ...typography.micro, color: colors.textMuted, minHeight: 28 },
+  over: { color: colors.warning },
 });

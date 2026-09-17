@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 
+import { AppButton, SectionHeader } from '@/design/components';
+import { colors, spacing } from '@/design/theme';
 import { useAuth } from '@/features/auth/context/AuthContext';
 
 import { CalorieTargetCard } from '../components/CalorieTargetCard';
@@ -31,7 +33,7 @@ export function DashboardScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefreshing} />}
@@ -60,18 +62,21 @@ export function DashboardScreen() {
 
         {status === 'success' && data && activeGoal && dailyProgress ? (
           <View style={styles.dashboard}>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => router.push('/goals/edit')}
-              style={({ pressed }) => [styles.editGoalsButton, pressed && styles.pressed]}
-            >
-              <Text style={styles.editGoalsText}>Edit Goals</Text>
-            </Pressable>
+            <View style={styles.sectionHeader}>
+              <SectionHeader subtitle="Your daily targets and intake" title="Nutrition" />
+              <AppButton
+                icon="options-outline"
+                label="Edit Goals"
+                onPress={() => router.push('/goals/edit')}
+                style={styles.editGoalsButton}
+                tone="ghost"
+              />
+            </View>
 
             <CalorieTargetCard progress={dailyProgress.calories} />
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Macros</Text>
+              <SectionHeader title="Macros" />
               <View style={styles.macroGrid}>
                 <MacroTargetCard label="Protein" progress={dailyProgress.protein} />
                 <MacroTargetCard label="Carbs" progress={dailyProgress.carbs} />
@@ -82,8 +87,9 @@ export function DashboardScreen() {
             <GoalSummaryCard goal={activeGoal} profile={data.profile} />
 
             <QuickActions
-              onDiary={() => router.push('/diary')}
+              onCustomFood={() => router.push('/manual-food')}
               onFindFood={() => router.push('/find-food')}
+              onSavedMeals={() => router.push('/saved-meals')}
               onScanBarcode={() => router.push('/scan')}
             />
           </View>
@@ -96,44 +102,28 @@ export function DashboardScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
   },
   content: {
     flexGrow: 1,
-    gap: 24,
-    padding: 20,
+    gap: spacing.xl,
+    paddingBottom: 112,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
   },
   dashboard: {
-    gap: 22,
+    gap: spacing.xl,
   },
   section: {
-    gap: 12,
-  },
-  sectionTitle: {
-    color: '#17211b',
-    fontSize: 18,
-    fontWeight: '900',
-    textTransform: 'uppercase',
+    gap: spacing.sm,
   },
   macroGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
+    gap: spacing.xs,
   },
+  sectionHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   editGoalsButton: {
-    alignItems: 'center',
-    backgroundColor: '#1f8a5b',
-    borderRadius: 8,
-    justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
-  },
-  editGoalsText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  pressed: {
-    opacity: 0.82,
+    minHeight: 44,
+    paddingHorizontal: spacing.xs,
   },
 });

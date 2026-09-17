@@ -1,5 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { AppButton, AppCard, StatusPill } from '@/design/components';
+import { colors, radii, spacing, typography } from '@/design/theme';
+
 import type { FoodSearchResult } from '../types/foodSearchTypes';
 
 type FoodDetailProps = {
@@ -20,7 +23,7 @@ export function FoodDetail({
   onFavorite,
 }: FoodDetailProps) {
   return (
-    <View style={styles.detailCard}>
+    <AppCard raised style={styles.detailCard}>
       <Pressable
         accessibilityRole="button"
         onPress={onBack}
@@ -29,7 +32,7 @@ export function FoodDetail({
         <Text style={styles.secondaryButtonText}>{backLabel}</Text>
       </Pressable>
 
-      <Text style={styles.sourceText}>Source: {food.sourceLabel}</Text>
+      <StatusPill icon="server-outline" label={food.sourceLabel} tone="information" />
       <Text style={styles.detailTitle}>{food.name}</Text>
       {food.brand ? <Text style={styles.detailMeta}>{food.brand}</Text> : null}
       <Text style={styles.detailMeta}>Serving: {formatServing(food)}</Text>
@@ -58,43 +61,17 @@ export function FoodDetail({
       </View>
 
       {onFavorite ? (
-        <Pressable
-          accessibilityRole="button"
+        <AppButton
+          icon="heart-outline"
+          label="Favorite Food"
           onPress={onFavorite}
-          style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
-        >
-          <Text style={styles.secondaryButtonText}>Favorite Food</Text>
-        </Pressable>
+          tone="secondary"
+        />
       ) : null}
-      <PrimaryButton disabled={false} label="Add to Diary" onPress={onAddToDiary} />
+      <AppButton icon="add" label="Add to Diary" onPress={onAddToDiary} />
 
       {message ? <Text style={styles.infoMessage}>{message}</Text> : null}
-    </View>
-  );
-}
-
-function PrimaryButton({
-  disabled,
-  label,
-  onPress,
-}: {
-  disabled: boolean;
-  label: string;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      accessibilityRole="button"
-      disabled={disabled}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.primaryButton,
-        disabled && styles.disabled,
-        pressed && !disabled && styles.pressed,
-      ]}
-    >
-      <Text style={styles.primaryButtonText}>{label}</Text>
-    </Pressable>
+    </AppCard>
   );
 }
 
@@ -143,98 +120,64 @@ function formatBasis(food: FoodSearchResult): string {
 
 const styles = StyleSheet.create({
   detailCard: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
-    borderWidth: 1,
-    gap: 14,
-    padding: 18,
-  },
-  sourceText: {
-    color: '#1f8a5b',
-    fontSize: 13,
-    fontWeight: '900',
-    textTransform: 'uppercase',
+    gap: spacing.sm,
+    padding: spacing.lg,
   },
   detailTitle: {
-    color: '#17211b',
-    fontSize: 28,
-    fontWeight: '900',
-    lineHeight: 34,
+    ...typography.metric,
+    color: colors.textPrimary,
   },
   detailMeta: {
-    color: '#526057',
-    fontSize: 16,
-    fontWeight: '700',
+    ...typography.secondary,
+    color: colors.textSecondary,
   },
   attributionText: {
-    color: '#617067',
-    fontSize: 12,
-    fontWeight: '800',
+    ...typography.micro,
+    color: colors.textMuted,
   },
   nutrientGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: spacing.xs,
   },
   nutrient: {
-    backgroundColor: '#f7f8f3',
-    borderRadius: 8,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.medium,
     minWidth: '47%',
-    padding: 12,
+    padding: spacing.sm,
   },
   nutrientLabel: {
-    color: '#617067',
-    fontSize: 12,
-    fontWeight: '900',
+    ...typography.micro,
+    color: colors.textMuted,
     textTransform: 'uppercase',
   },
   nutrientValue: {
-    color: '#17211b',
-    fontSize: 17,
-    fontWeight: '900',
-    marginTop: 6,
-  },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: '#1f8a5b',
-    borderRadius: 8,
-    justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
-  },
-  primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '900',
+    ...typography.cardTitle,
+    color: colors.textPrimary,
+    marginTop: spacing.xxs,
   },
   secondaryButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceInteractive,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 44,
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.md,
   },
   secondaryButtonText: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textPrimary,
   },
   infoMessage: {
-    backgroundColor: '#eaf2ec',
-    borderColor: '#cfe0d4',
-    borderRadius: 8,
+    ...typography.secondary,
+    backgroundColor: colors.successMuted,
+    borderColor: colors.success,
+    borderRadius: radii.medium,
     borderWidth: 1,
-    color: '#1f7a54',
-    fontSize: 14,
-    fontWeight: '800',
-    lineHeight: 20,
-    padding: 14,
-  },
-  disabled: {
-    opacity: 0.72,
+    color: colors.success,
+    padding: spacing.sm,
   },
   pressed: {
     opacity: 0.82,

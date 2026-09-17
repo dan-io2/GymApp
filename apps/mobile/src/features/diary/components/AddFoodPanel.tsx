@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
 import { AuthMessage } from '@/features/auth/components/AuthMessage';
 
 import { useAddFoodToDiary } from '../hooks/useAddFoodToDiary';
@@ -128,6 +129,8 @@ function AddFoodPanelContent({
             accessibilityLabel="Item quantity"
             keyboardType="decimal-pad"
             onChangeText={addFood.setItemQuantityText}
+            placeholderTextColor={colors.textMuted}
+            selectionColor={colors.accent}
             style={styles.quantityInput}
             value={addFood.itemQuantityText}
           />
@@ -143,6 +146,8 @@ function AddFoodPanelContent({
             accessibilityLabel="Amount eaten"
             keyboardType="decimal-pad"
             onChangeText={addFood.setQuantityText}
+            placeholderTextColor={colors.textMuted}
+            selectionColor={colors.accent}
             style={styles.quantityInput}
             value={addFood.quantityText}
           />
@@ -319,190 +324,178 @@ function formatBasis(food: Food): string {
 
 const styles = StyleSheet.create({
   panel: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
-    gap: 16,
-    padding: 18,
+    gap: spacing.md,
+    padding: spacing.md,
   },
   kicker: {
-    color: '#1f8a5b',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.accent,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 24,
-    fontWeight: '900',
-    lineHeight: 30,
+    ...typography.metric,
+    color: colors.textPrimary,
     marginTop: 4,
   },
   meta: {
-    color: '#526057',
-    fontSize: 15,
-    fontWeight: '700',
-    lineHeight: 21,
+    ...typography.secondary,
+    color: colors.textSecondary,
   },
   servingBox: {
-    backgroundColor: '#f7f8f3',
-    borderRadius: 8,
-    gap: 4,
-    padding: 14,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.medium,
+    gap: spacing.xxs,
+    padding: spacing.sm,
   },
   servingOptions: {
-    gap: 8,
-    marginTop: 8,
+    gap: spacing.xs,
+    marginTop: spacing.xs,
   },
   servingOptionButton: {
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
-    minHeight: 42,
+    minHeight: controlHeights.compact,
     justifyContent: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.sm,
   },
   servingOptionSelected: {
-    backgroundColor: '#1f8a5b',
-    borderColor: '#1f8a5b',
+    backgroundColor: colors.accentMuted,
+    borderColor: colors.accent,
   },
   servingOptionText: {
-    color: '#526057',
-    fontSize: 14,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   servingOptionTextSelected: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   section: {
-    gap: 10,
+    gap: spacing.xs,
   },
   label: {
-    color: '#617067',
-    fontSize: 12,
-    fontWeight: '900',
+    ...typography.micro,
+    color: colors.textMuted,
     textTransform: 'uppercase',
   },
   value: {
-    color: '#17211b',
-    fontSize: 18,
-    fontWeight: '900',
+    ...typography.cardTitle,
+    color: colors.textPrimary,
   },
   mealGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: spacing.xs,
   },
   mealButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     flexBasis: '48%',
     flexGrow: 1,
     justifyContent: 'center',
-    minHeight: 46,
+    minHeight: controlHeights.compact,
   },
   mealButtonSelected: {
-    backgroundColor: '#1f8a5b',
-    borderColor: '#1f8a5b',
+    backgroundColor: colors.accentMuted,
+    borderColor: colors.accent,
   },
   mealButtonText: {
-    color: '#526057',
-    fontSize: 14,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   mealButtonTextSelected: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   quantityRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 10,
+    gap: spacing.xs,
   },
   quantityButton: {
     alignItems: 'center',
-    backgroundColor: '#eaf2ec',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceInteractive,
+    borderRadius: radii.medium,
     height: 48,
     justifyContent: 'center',
     width: 48,
   },
   quantityButtonText: {
-    color: '#17211b',
+    color: colors.textPrimary,
     fontSize: 24,
     fontWeight: '900',
   },
   quantityInput: {
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    ...typography.cardTitle,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
-    color: '#17211b',
+    color: colors.textPrimary,
     flex: 1,
-    fontSize: 18,
-    fontWeight: '900',
     minHeight: 48,
-    paddingHorizontal: 14,
+    paddingHorizontal: spacing.sm,
     textAlign: 'center',
   },
   unitGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: spacing.xs,
   },
   unitButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
-    minHeight: 38,
+    minHeight: controlHeights.compact,
     minWidth: 58,
     paddingHorizontal: 10,
   },
   unitButtonSelected: {
-    backgroundColor: '#1f8a5b',
-    borderColor: '#1f8a5b',
+    backgroundColor: colors.accentMuted,
+    borderColor: colors.accent,
   },
   unitButtonText: {
-    color: '#526057',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   unitButtonTextSelected: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   previewGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: spacing.xs,
   },
   previewMetric: {
-    backgroundColor: '#f7f8f3',
-    borderRadius: 8,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.medium,
     flexBasis: '47%',
     flexGrow: 1,
-    padding: 12,
+    padding: spacing.sm,
   },
   metricValue: {
-    color: '#17211b',
-    fontSize: 20,
-    fontWeight: '900',
-    marginTop: 6,
+    ...typography.sectionTitle,
+    color: colors.textPrimary,
+    marginTop: spacing.xxs,
   },
   addButton: {
     alignItems: 'center',
-    backgroundColor: '#1f8a5b',
-    borderRadius: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radii.medium,
     justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.md,
   },
   addButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '900',
+    ...typography.bodyStrong,
+    color: colors.accentText,
   },
   disabled: {
     opacity: 0.55,

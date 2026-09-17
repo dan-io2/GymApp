@@ -1,8 +1,16 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import {
+  AppButton,
+  AppCard,
+  AppIcon,
+  AppScreen,
+  type AppIconName,
+  SectionHeader,
+} from '@/design/components';
+import { accents, colors, radii, spacing, typography } from '@/design/theme';
 import { AuthMessage } from '@/features/auth/components/AuthMessage';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { mapAuthError } from '@/features/auth/services/authErrors';
@@ -14,13 +22,9 @@ export function SettingsScreen() {
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   async function handleSignOut() {
-    if (isSigningOut) {
-      return;
-    }
-
+    if (isSigningOut) return;
     setErrorMessage(null);
     setIsSigningOut(true);
-
     try {
       await signOut();
     } catch (error) {
@@ -30,109 +34,145 @@ export function SettingsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Pressable
-          accessibilityLabel="Back to dashboard"
-          accessibilityRole="button"
-          hitSlop={10}
-          onPress={() => router.back()}
-          style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-        >
-          <Text style={styles.backText}>Back</Text>
-        </Pressable>
+    <AppScreen>
+      <View>
+        <Text style={styles.kicker}>Account and tools</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          More
+        </Text>
+      </View>
 
-        <View>
-          <Text style={styles.kicker}>Account</Text>
-          <Text accessibilityRole="header" style={styles.title}>
-            Settings
-          </Text>
-          <Text style={styles.description}>
-            {user?.email ? `Signed in as ${user.email}.` : 'You are signed in.'}
+      <AppCard raised style={styles.accountCard}>
+        <View style={styles.avatar}>
+          <AppIcon color={colors.accent} name="person-outline" size={26} />
+        </View>
+        <View style={styles.accountCopy}>
+          <Text style={styles.accountLabel}>Signed in</Text>
+          <Text numberOfLines={1} style={styles.email}>
+            {user?.email ?? 'GymApp account'}
           </Text>
         </View>
+      </AppCard>
 
-        {errorMessage ? <AuthMessage message={errorMessage} tone="error" /> : null}
+      {errorMessage ? <AuthMessage message={errorMessage} tone="error" /> : null}
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ busy: isSigningOut, disabled: isSigningOut }}
-          disabled={isSigningOut}
-          onPress={handleSignOut}
-          style={({ pressed }) => [
-            styles.signOutButton,
-            isSigningOut && styles.disabled,
-            pressed && !isSigningOut && styles.pressed,
-          ]}
-        >
-          <Text style={styles.signOutText}>{isSigningOut ? 'Signing out' : 'Sign out'}</Text>
-        </Pressable>
+      <View style={styles.section}>
+        <SectionHeader title="Nutrition" />
+        <AppCard style={styles.list}>
+          <DisclosureRow
+            color={accents.nutrition.foreground}
+            icon="options-outline"
+            label="Nutrition goals"
+            onPress={() => router.push('/goals/edit')}
+          />
+          <DisclosureRow
+            color={accents.analytics.foreground}
+            icon="heart-outline"
+            label="Favorites"
+            onPress={() => router.push('/find-food')}
+          />
+          <DisclosureRow
+            color={accents.carbohydrate.foreground}
+            icon="restaurant-outline"
+            label="Saved meals"
+            onPress={() => router.push('/saved-meals')}
+          />
+          <DisclosureRow
+            color={accents.weight.foreground}
+            icon="create-outline"
+            label="Custom food"
+            onPress={() => router.push('/manual-food')}
+          />
+        </AppCard>
       </View>
-    </SafeAreaView>
+
+      <View style={styles.section}>
+        <SectionHeader title="Preferences" />
+        <AppCard style={styles.list}>
+          <DisclosureRow
+            color={colors.warning}
+            icon="notifications-outline"
+            label="Reminders"
+            onPress={() => router.push('/reminders')}
+          />
+          <DisclosureRow
+            color={accents.weight.foreground}
+            icon="scale-outline"
+            label="Weight and units"
+            onPress={() => router.push('/progress')}
+          />
+        </AppCard>
+      </View>
+
+      <AppButton
+        icon="log-out-outline"
+        label={isSigningOut ? 'Signing out' : 'Sign out'}
+        loading={isSigningOut}
+        onPress={() => void handleSignOut()}
+        tone="danger"
+      />
+    </AppScreen>
+  );
+}
+
+function DisclosureRow({
+  color,
+  icon,
+  label,
+  onPress,
+}: {
+  color: string;
+  icon: AppIconName;
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+    >
+      <View style={[styles.rowIcon, { backgroundColor: `${color}1F` }]}>
+        <AppIcon color={color} name={icon} />
+      </View>
+      <Text style={styles.rowLabel}>{label}</Text>
+      <AppIcon color={colors.textMuted} name="chevron-forward" size={18} />
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#f7f8f3',
-  },
-  container: {
-    flex: 1,
-    gap: 24,
-    padding: 24,
-  },
-  backButton: {
+  kicker: { ...typography.caption, color: colors.accent, textTransform: 'uppercase' },
+  title: { ...typography.screenTitle, color: colors.textPrimary, marginTop: spacing.xxs },
+  accountCard: { alignItems: 'center', flexDirection: 'row', gap: spacing.sm },
+  avatar: {
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
-    borderWidth: 1,
-    minHeight: 44,
-    paddingHorizontal: 16,
+    backgroundColor: colors.accentMuted,
+    borderRadius: radii.card,
+    height: 48,
     justifyContent: 'center',
+    width: 48,
   },
-  backText: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  kicker: {
-    color: '#1f8a5b',
-    fontSize: 15,
-    fontWeight: '900',
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: '#17211b',
-    fontSize: 36,
-    fontWeight: '900',
-    lineHeight: 42,
-    marginTop: 8,
-  },
-  description: {
-    color: '#526057',
-    fontSize: 17,
-    lineHeight: 25,
-    marginTop: 12,
-  },
-  signOutButton: {
+  accountCopy: { flex: 1 },
+  accountLabel: { ...typography.micro, color: colors.textMuted, textTransform: 'uppercase' },
+  email: { ...typography.bodyStrong, color: colors.textPrimary, marginTop: spacing.xxs },
+  section: { gap: spacing.sm },
+  list: { paddingVertical: 0 },
+  row: {
     alignItems: 'center',
-    backgroundColor: '#17211b',
-    borderRadius: 8,
+    borderBottomColor: colors.borderSubtle,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    minHeight: 58,
+  },
+  rowPressed: { opacity: 0.6 },
+  rowIcon: {
+    alignItems: 'center',
+    borderRadius: radii.medium,
+    height: 34,
     justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
+    width: 34,
   },
-  signOutText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  disabled: {
-    opacity: 0.72,
-  },
-  pressed: {
-    opacity: 0.82,
-  },
+  rowLabel: { ...typography.bodyStrong, color: colors.textPrimary, flex: 1 },
 });

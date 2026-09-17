@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { colors, spacing, typography } from '@/design/theme';
+
 export function WelcomeScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -21,31 +23,27 @@ export function WelcomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: spacing.xl,
   },
   kicker: {
-    color: '#1f7a54',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 12,
+    ...typography.bodyStrong,
+    color: colors.accent,
+    marginBottom: spacing.sm,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 36,
-    fontWeight: '800',
-    lineHeight: 42,
-    marginBottom: 16,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
   },
   description: {
-    color: '#526057',
-    fontSize: 17,
-    lineHeight: 25,
+    ...typography.body,
+    color: colors.textSecondary,
     maxWidth: 340,
   },
 });

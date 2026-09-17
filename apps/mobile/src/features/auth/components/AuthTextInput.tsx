@@ -1,5 +1,7 @@
 import { StyleSheet, Text, TextInput, type TextInputProps, View } from 'react-native';
 
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
+
 type AuthTextInputProps = TextInputProps & {
   label: string;
   error?: string;
@@ -12,7 +14,8 @@ export function AuthTextInput({ label, error, style, ...props }: AuthTextInputPr
       <TextInput
         accessibilityLabel={label}
         autoCapitalize="none"
-        placeholderTextColor="#849088"
+        placeholderTextColor={colors.textMuted}
+        selectionColor={colors.accent}
         style={[styles.input, error ? styles.inputError : null, style]}
         {...props}
       />
@@ -23,29 +26,27 @@ export function AuthTextInput({ label, error, style, ...props }: AuthTextInputPr
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
+    gap: spacing.xs,
   },
   label: {
-    color: '#253329',
-    fontSize: 15,
-    fontWeight: '700',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   input: {
-    backgroundColor: '#ffffff',
-    borderColor: '#cbd6ce',
-    borderRadius: 8,
+    ...typography.body,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
-    color: '#17211b',
-    fontSize: 16,
-    minHeight: 52,
-    paddingHorizontal: 14,
+    color: colors.textPrimary,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.md,
   },
   inputError: {
-    borderColor: '#b42318',
+    borderColor: colors.danger,
   },
   error: {
-    color: '#b42318',
-    fontSize: 14,
-    lineHeight: 20,
+    ...typography.secondary,
+    color: colors.danger,
   },
 });

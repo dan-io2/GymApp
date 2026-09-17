@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { colors, radii, spacing, typography } from '@/design/theme';
+
 type ChoiceCardProps<T extends string> = {
   description?: string;
   isSelected: boolean;
@@ -38,45 +40,44 @@ export function ChoiceCard<T extends string>({
 const styles = StyleSheet.create({
   card: {
     alignItems: 'center',
-    borderColor: '#d5ddd5',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 14,
+    gap: spacing.sm,
     justifyContent: 'space-between',
     minHeight: 64,
-    padding: 16,
+    padding: spacing.md,
   },
   selected: {
-    backgroundColor: '#edf8f1',
-    borderColor: '#1f8a5b',
+    backgroundColor: colors.accentMuted,
+    borderColor: colors.accent,
   },
   pressed: {
     opacity: 0.88,
   },
   content: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xxs,
   },
   title: {
-    color: '#17211b',
-    fontSize: 16,
-    fontWeight: '800',
+    ...typography.bodyStrong,
+    color: colors.textPrimary,
   },
   description: {
-    color: '#526057',
-    fontSize: 14,
-    lineHeight: 20,
+    ...typography.secondary,
+    color: colors.textSecondary,
   },
   radio: {
-    borderColor: '#9aa79d',
-    borderRadius: 999,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.capsule,
     borderWidth: 2,
     height: 20,
     width: 20,
   },
   radioSelected: {
-    backgroundColor: '#1f8a5b',
-    borderColor: '#1f8a5b',
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
   },
 });

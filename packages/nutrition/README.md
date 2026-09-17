@@ -15,7 +15,10 @@ for future onboarding use.
 - male: `10 * weightKg + 6.25 * heightCm - 5 * ageYears + 5`
 - female: `10 * weightKg + 6.25 * heightCm - 5 * ageYears - 161`
 
-The result is rounded to the nearest whole calorie.
+The result is rounded to the nearest whole calorie at the public API boundary.
+The plan intentionally passes that displayed whole-calorie BMR into TDEE, so
+the published plan is deterministic and matches the standalone BMR/TDEE
+functions.
 
 ## TDEE
 
@@ -61,6 +64,10 @@ carbsG = (dailyCalories - protein calories - fat calories) / 4
 Macro grams are rounded to the nearest whole gram. If protein and fat exceed
 the calorie target, the package throws a typed error instead of returning
 negative carbohydrates.
+
+Provider-reported food calories remain the source of truth. Nutrition serving
+calculations retain fractional precision internally; mobile presentation
+formats calories to whole kcal and macros to at most one decimal place.
 
 ## Validation
 

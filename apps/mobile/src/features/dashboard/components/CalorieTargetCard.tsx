@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AppCard, ProgressBar, StatusPill } from '@/design/components';
+import { accents, colors, spacing, typography } from '@/design/theme';
 import type { MacroProgress } from '@/features/diary/types/foodTypes';
 
 import {
@@ -9,12 +11,10 @@ import {
   getClampedProgressRatio,
 } from '../utils/dashboardFormatting';
 
-type CalorieTargetCardProps = {
-  progress: MacroProgress;
-};
+type CalorieTargetCardProps = { progress: MacroProgress };
 
 export function CalorieTargetCard({ progress }: CalorieTargetCardProps) {
-  const clampedProgressRatio = getClampedProgressRatio(progress.progressRatio);
+  const overTarget = progress.overage > 0;
   const statusText = formatProgressStatus({
     overage: progress.overage,
     remaining: progress.remaining,
@@ -22,89 +22,52 @@ export function CalorieTargetCard({ progress }: CalorieTargetCardProps) {
   });
 
   return (
-    <View
+    <AppCard
       accessibilityLabel={`Today's calories ${formatCalories(progress.consumed)} of ${formatCalories(progress.target)} kilocalories, ${statusText}`}
-      style={[styles.card, progress.overage > 0 && styles.cardOverTarget]}
+      raised
+      style={styles.card}
     >
-      <Text style={styles.kicker}>Daily Calories</Text>
-      <View style={styles.valueStack}>
+      <View style={styles.header}>
+        <Text style={styles.kicker}>Calories</Text>
+        <StatusPill
+          icon={overTarget ? 'add-circle-outline' : 'sparkles-outline'}
+          label={statusText}
+          tone={overTarget ? 'warning' : 'success'}
+        />
+      </View>
+      <View style={styles.metricRow}>
         <Text accessibilityRole="header" style={styles.calories}>
           {formatCalories(progress.consumed)}
         </Text>
         <Text style={styles.unit}>of {formatCaloriesWithUnit(progress.target)}</Text>
       </View>
-      <View style={styles.barTrack}>
-        <View
-          style={[
-            styles.barFill,
-            progress.overage > 0 && styles.barFillOverTarget,
-            { width: `${clampedProgressRatio * 100}%` },
-          ]}
-          testID="calorie-progress-fill"
-        />
+      <ProgressBar
+        overTarget={overTarget}
+        progress={getClampedProgressRatio(progress.progressRatio)}
+        testID="calorie-progress-fill"
+      />
+      <View style={styles.footer}>
+        <Text style={styles.caption}>Consumed</Text>
+        <Text style={styles.caption}>{overTarget ? 'Daily target reached' : 'Daily target'}</Text>
       </View>
-      <Text style={[styles.label, progress.overage > 0 && styles.labelOverTarget]}>
-        {statusText}
-      </Text>
-    </View>
+    </AppCard>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#17211b',
-    borderRadius: 8,
-    padding: 24,
+    backgroundColor: accents.nutrition.surface,
+    borderColor: accents.nutrition.muted,
+    borderTopColor: accents.nutrition.foreground,
+    borderTopWidth: 2,
+    gap: spacing.md,
+    padding: spacing.lg,
   },
-  cardOverTarget: {
-    backgroundColor: '#1c2a22',
-  },
-  kicker: {
-    color: '#a9d8bd',
-    fontSize: 14,
-    fontWeight: '900',
-    textTransform: 'uppercase',
-  },
-  valueStack: {
-    alignItems: 'flex-start',
-    gap: 2,
-    marginTop: 18,
-  },
-  calories: {
-    color: '#ffffff',
-    fontSize: 54,
-    fontWeight: '900',
-    letterSpacing: 0,
-    lineHeight: 60,
-  },
-  unit: {
-    color: '#dce8df',
-    fontSize: 17,
-    fontWeight: '800',
-    lineHeight: 23,
-  },
-  label: {
-    color: '#dce8df',
-    fontSize: 16,
-    fontWeight: '700',
-    marginTop: 14,
-  },
-  barTrack: {
-    backgroundColor: '#2a3a31',
-    borderRadius: 5,
-    height: 10,
-    marginTop: 18,
-    overflow: 'hidden',
-  },
-  barFill: {
-    backgroundColor: '#a9d8bd',
-    borderRadius: 5,
-    height: 10,
-  },
-  barFillOverTarget: {
-    backgroundColor: '#55c68d',
-  },
-  labelOverTarget: {
-    color: '#c9f0d8',
-  },
+  header: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  kicker: { ...typography.caption, color: colors.textSecondary, textTransform: 'uppercase' },
+  metricRow: { alignItems: 'flex-end', flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
+  calories: { ...typography.display, color: colors.textPrimary, fontVariant: ['tabular-nums'] },
+  unit: { ...typography.bodyStrong, color: colors.textSecondary, marginBottom: 5 },
+  footer: { flexDirection: 'row', justifyContent: 'space-between' },
+  caption: { ...typography.micro, color: colors.textMuted },
 });

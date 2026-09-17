@@ -3,6 +3,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AppIcon } from '@/design/components';
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
 import { AuthMessage } from '@/features/auth/components/AuthMessage';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { AddFoodPanel } from '@/features/diary/components/AddFoodPanel';
@@ -52,7 +54,8 @@ export function FindFoodScreen() {
           onPress={() => router.replace('/')}
           style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
         >
-          <Text style={styles.backText}>Back Home</Text>
+          <AppIcon color={colors.textPrimary} name="chevron-back" />
+          <Text style={styles.backText}>Today</Text>
         </Pressable>
         <Pressable
           accessibilityRole="button"
@@ -60,6 +63,13 @@ export function FindFoodScreen() {
           style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
         >
           <Text style={styles.secondaryButtonText}>Saved Meals</Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/manual-food')}
+          style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
+        >
+          <Text style={styles.secondaryButtonText}>Create Custom Food</Text>
         </Pressable>
 
         <View>
@@ -102,7 +112,8 @@ export function FindFoodScreen() {
               onChangeText={findFood.setQuery}
               onSubmitEditing={() => void findFood.search()}
               placeholder="chicken breast"
-              placeholderTextColor="#7a877d"
+              placeholderTextColor={colors.textMuted}
+              selectionColor={colors.accent}
               returnKeyType="search"
               style={styles.input}
               value={findFood.query}
@@ -138,7 +149,8 @@ export function FindFoodScreen() {
               keyboardType="number-pad"
               onChangeText={findFood.setBarcode}
               placeholder="012345678905"
-              placeholderTextColor="#7a877d"
+              placeholderTextColor={colors.textMuted}
+              selectionColor={colors.accent}
               style={styles.input}
               value={findFood.barcode}
             />
@@ -183,7 +195,8 @@ export function FindFoodScreen() {
               keyboardType="number-pad"
               onChangeText={findFood.setExternalId}
               placeholder={findFood.provider === 'fatsecret' ? 'FatSecret Food ID' : '2646170'}
-              placeholderTextColor="#7a877d"
+              placeholderTextColor={colors.textMuted}
+              selectionColor={colors.accent}
               style={styles.input}
               value={findFood.externalId}
             />
@@ -401,93 +414,91 @@ function formatServing(food: FoodSearchResult): string {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
   },
   content: {
-    gap: 18,
-    padding: 20,
+    gap: spacing.md,
+    paddingBottom: spacing.xxl,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
   },
   backButton: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 44,
-    paddingHorizontal: 16,
+    flexDirection: 'row',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm,
   },
   backText: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textPrimary,
   },
   kicker: {
-    color: '#1f8a5b',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.accent,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 36,
-    fontWeight: '900',
-    lineHeight: 42,
-    marginTop: 8,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
+    marginTop: spacing.xxs,
   },
   segmentedControl: {
-    backgroundColor: '#eaf2ec',
-    borderRadius: 8,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.medium,
     flexDirection: 'row',
-    gap: 6,
-    padding: 6,
+    gap: spacing.xxs,
+    padding: spacing.xxs,
   },
   segment: {
     alignItems: 'center',
-    borderRadius: 6,
+    borderRadius: radii.small,
     flex: 1,
     justifyContent: 'center',
     minHeight: 44,
   },
   segmentSelected: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surfaceInteractive,
   },
   segmentText: {
-    color: '#526057',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textMuted,
   },
   segmentTextSelected: {
-    color: '#17211b',
+    color: colors.accent,
   },
   panel: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
-    gap: 12,
-    padding: 18,
+    gap: spacing.sm,
+    padding: spacing.md,
   },
   panelTitle: {
-    color: '#17211b',
-    fontSize: 20,
-    fontWeight: '900',
+    ...typography.sectionTitle,
+    color: colors.textPrimary,
   },
   inputLabel: {
-    color: '#526057',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
   },
   input: {
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    ...typography.bodyStrong,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
-    color: '#17211b',
-    fontSize: 17,
-    fontWeight: '800',
-    minHeight: 54,
-    paddingHorizontal: 14,
+    color: colors.textPrimary,
+    minHeight: controlHeights.large,
+    paddingHorizontal: spacing.sm,
   },
   providerGrid: {
     flexDirection: 'row',
@@ -495,8 +506,8 @@ const styles = StyleSheet.create({
   },
   providerButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     flex: 1,
     justifyContent: 'center',
@@ -504,135 +515,129 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   providerButtonSelected: {
-    backgroundColor: '#1f8a5b',
-    borderColor: '#1f8a5b',
+    backgroundColor: colors.accentMuted,
+    borderColor: colors.accent,
   },
   providerText: {
-    color: '#526057',
-    fontSize: 14,
-    fontWeight: '800',
+    ...typography.caption,
+    color: colors.textSecondary,
   },
   providerTextSelected: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   suggestionList: {
-    gap: 8,
+    gap: spacing.xs,
   },
   suggestionButton: {
-    backgroundColor: '#f7f8f3',
-    borderRadius: 8,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.medium,
     minHeight: 40,
     justifyContent: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.sm,
   },
   suggestionText: {
-    color: '#17211b',
-    fontSize: 15,
-    fontWeight: '800',
+    ...typography.secondary,
+    color: colors.textPrimary,
   },
   attributionText: {
-    color: '#617067',
-    fontSize: 12,
-    fontWeight: '800',
+    ...typography.micro,
+    color: colors.textMuted,
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#1f8a5b',
-    borderRadius: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radii.medium,
     justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.md,
   },
   primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '900',
+    ...typography.bodyStrong,
+    color: colors.accentText,
   },
   secondaryButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceInteractive,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
-    minHeight: 44,
-    paddingHorizontal: 16,
+    minHeight: controlHeights.compact,
+    paddingHorizontal: spacing.md,
   },
   secondaryButtonText: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textPrimary,
   },
   sectionTitle: {
-    color: '#17211b',
-    fontSize: 20,
-    fontWeight: '900',
+    ...typography.sectionTitle,
+    color: colors.textPrimary,
   },
   results: {
-    gap: 12,
+    gap: spacing.sm,
   },
   resultCard: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
-    gap: 8,
-    padding: 16,
+    gap: spacing.xs,
+    padding: spacing.md,
   },
   resultContent: {
-    gap: 8,
+    gap: spacing.xs,
   },
   cardActionButton: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: '#eaf2ec',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceInteractive,
+    borderRadius: radii.medium,
     justifyContent: 'center',
-    minHeight: 38,
-    paddingHorizontal: 12,
+    minHeight: controlHeights.compact,
+    paddingHorizontal: spacing.sm,
   },
   cardActionText: {
-    color: '#1f7a54',
-    fontSize: 13,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.accent,
   },
   resultHeader: {
     gap: 8,
   },
   foodName: {
-    color: '#17211b',
-    fontSize: 18,
-    fontWeight: '900',
+    ...typography.cardTitle,
+    color: colors.textPrimary,
   },
   sourceBadge: {
-    color: '#1f8a5b',
-    fontSize: 12,
-    fontWeight: '900',
+    ...typography.micro,
+    alignSelf: 'flex-start',
+    backgroundColor: colors.informationMuted,
+    borderRadius: radii.capsule,
+    color: colors.information,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.xxs,
     textTransform: 'uppercase',
   },
   foodMeta: {
-    color: '#526057',
-    fontSize: 14,
-    fontWeight: '700',
+    ...typography.secondary,
+    color: colors.textSecondary,
   },
   foodMacros: {
-    color: '#17211b',
-    fontSize: 14,
-    fontWeight: '900',
+    ...typography.caption,
+    color: colors.textPrimary,
   },
   addFoodSection: {
-    gap: 12,
+    gap: spacing.sm,
   },
   stateCard: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderRadius: radii.card,
     borderWidth: 1,
-    padding: 16,
+    padding: spacing.md,
   },
   stateText: {
-    color: '#526057',
-    fontSize: 15,
-    fontWeight: '800',
+    ...typography.secondary,
+    color: colors.textSecondary,
   },
   disabled: {
     opacity: 0.72,

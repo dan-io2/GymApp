@@ -222,6 +222,15 @@ weight-change adjustment based on the documented default assumption of
 carbohydrates receive remaining calories after protein and fat. All public
 results are rounded to whole calories or grams.
 
+Food nutrition is normalized at provider boundaries. USDA and Open Food Facts
+per-100g values are converted to a supplied mass serving only when its mass
+unit is known (`g`, `kg`, `oz`, or `lb`); volume is never treated as mass.
+FatSecret serving options retain their provider serving basis. Provider
+calories remain authoritative even when `protein * 4 + carbohydrates * 4 +
+fat * 9` differs because of fiber, alcohol, rounding, or provider methodology.
+Mobile portion and diary calculations retain fractional precision internally;
+calories and macros are rounded only at presentation boundaries.
+
 ## Database Domain
 
 Initial tables should eventually include:
@@ -485,6 +494,36 @@ Dashboard progress combines the active `nutrition_goals` row with today's
 macro calorie allocation. Visual bars clamp at 100%; over-target text preserves
 the positive overage while remaining values are never shown as negative.
 
+## Progress And Local Reminders
+
+TASK-015.5 adds feature-isolated `progress`, `reminders`, and `manual-food`
+modules. Progress UI calls a hook, which delegates persistence to a progress
+service and calendar calculations to pure domain utilities. Supabase access is
+not performed in screen components.
+
+Historical weights remain in `body_metrics` as canonical kilograms. The
+`local_date` column and unique user/date index define one official check-in per
+local calendar day. The security-invoker `upsert_weight_check_in` RPC updates a
+same-day record and `profiles.current_weight_kg` in one transaction. Existing
+owner-only body-metric RLS policies remain authoritative.
+
+Tracked-day, streak, consistency, calendar, graph-point, and monthly-recap
+semantics are documented in `docs/PROGRESS_SYSTEM.md`. Diary history is fetched
+in bounded pages and aggregated once; the architecture does not issue one query
+per date. Historical goal adherence remains explicitly unavailable because
+nutrition-goal effective-date snapshots do not yet exist.
+
+Reminder configuration is local to each authenticated user and device in
+AsyncStorage. `reminderService` is the only module that calls Expo
+Notifications. It owns contextual permission requests, daily/weekday local
+schedules, native identifier persistence, cancellation, and reconciliation.
+No push token or remote notification backend is introduced.
+
+Custom foods are user-owned `foods` rows with namespaced manual identities and
+flow through the existing diary snapshot path. Validated nutrition formulas,
+provider normalization, serving conversion, and diary arithmetic remain
+unchanged.
+
 ## Security
 
 All private user data must be protected using Supabase Row Level Security.
@@ -597,6 +636,29 @@ UI should display appropriate retry or correction actions.
 
 ## Presentation Formatting
 
+## Mobile Design System
+
+The mobile presentation layer is centralized under `apps/mobile/src/design`.
+`theme.ts` owns semantic dark-first tokens for surfaces, text, accent and
+status colors, typography, spacing, radii, icon sizes, control heights, and
+motion. Reusable primitives in `design/components` provide the consistent
+screen, card, button, input, icon, progress, status, section, and empty-state
+patterns used by feature screens.
+
+The authenticated Expo Router layout provides an inset bottom navigation bar
+for Today, Diary, Progress, and More. Focused workflows are intentionally
+outside that persistent navigation. This design layer is presentation-only:
+nutrition calculation, serving conversion, food identity, provider adapters,
+and database behavior remain in their existing feature/domain modules.
+
+Visual accents are semantic rather than screen-local: emerald represents
+nutrition and primary actions, blue/cyan represents weight and information,
+violet represents analytics and consistency, amber represents attention, and
+red is reserved for errors or destructive actions. The weight trend chart is
+rendered from ordinary React Native views using presentation-only geometry;
+it intentionally has no SVG or native chart dependency. Recorded points are
+connected directly without interpolation or fabricated values.
+
 Nutrition domain values keep their calculation/storage precision. UI
 components format values at the presentation boundary so dashboard and diary
 screens do not expose long floating-point values.
@@ -676,3 +738,18 @@ CI should eventually run:
 - lint
 - TypeScript compilation/type checking
 - automated tests
+
+TASK-014 configures EAS Build profiles for development, preview, and
+production. Preview builds use internal distribution and run as standalone
+apps against the deployed Supabase project; they do not require Expo Go,
+Metro, the developer Mac, or the local network after installation. Production
+uses store distribution and does not enable the development client. EAS
+environment variables provide only the public Supabase URL and publishable
+client key to the mobile build. FatSecret, USDA, service-role, database, and
+other private credentials remain in Supabase/server infrastructure.
+
+EAS Update is configured with the Expo project URL and an app-version runtime
+policy. Compatible JavaScript and asset changes may be delivered through
+preview or production channels after an explicit update publish. Native
+dependencies, permissions, Expo SDK updates, and native configuration changes
+still require a new build. No OTA update is published by repository setup.

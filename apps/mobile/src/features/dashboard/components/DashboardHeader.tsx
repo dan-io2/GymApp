@@ -1,67 +1,57 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-type DashboardHeaderProps = {
-  email?: string | null;
-  onOpenSettings: () => void;
-};
+import { AppIcon } from '@/design/components';
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
+
+type DashboardHeaderProps = { email?: string | null; onOpenSettings: () => void };
 
 export function DashboardHeader({ email, onOpenSettings }: DashboardHeaderProps) {
+  const name = email?.split('@')[0];
+  const date = new Intl.DateTimeFormat(undefined, {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  }).format(new Date());
+
   return (
     <View style={styles.container}>
       <View style={styles.identity}>
-        <Text style={styles.brand}>GymApp</Text>
-        <Text style={styles.greeting}>Welcome back{email ? `, ${email.split('@')[0]}` : ''}</Text>
+        <Text style={styles.date}>{date}</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          Today
+        </Text>
+        <Text style={styles.greeting}>
+          {name ? `Good to see you, ${name}` : 'Your daily nutrition at a glance'}
+        </Text>
       </View>
       <Pressable
         accessibilityLabel="Open account settings"
         accessibilityRole="button"
-        hitSlop={10}
+        hitSlop={8}
         onPress={onOpenSettings}
         style={({ pressed }) => [styles.settingsButton, pressed && styles.pressed]}
       >
-        <Text style={styles.settingsIcon}>Settings</Text>
+        <AppIcon color={colors.textPrimary} name="person-outline" />
       </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  identity: {
-    flex: 1,
-    paddingRight: 16,
-  },
-  brand: {
-    color: '#17211b',
-    fontSize: 22,
-    fontWeight: '900',
-  },
-  greeting: {
-    color: '#617067',
-    fontSize: 15,
-    fontWeight: '700',
-    marginTop: 4,
-  },
+  container: { alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-between' },
+  identity: { flex: 1, paddingRight: spacing.md },
+  date: { ...typography.caption, color: colors.accent },
+  title: { ...typography.screenTitle, color: colors.textPrimary, marginTop: spacing.xxs },
+  greeting: { ...typography.secondary, color: colors.textSecondary, marginTop: spacing.xxs },
   settingsButton: {
     alignItems: 'center',
-    borderColor: '#cfd9d1',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.card,
     borderWidth: 1,
+    height: controlHeights.compact,
     justifyContent: 'center',
-    minHeight: 44,
-    minWidth: 92,
-    paddingHorizontal: 12,
+    width: controlHeights.compact,
   },
-  settingsIcon: {
-    color: '#1f7a54',
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  pressed: {
-    opacity: 0.72,
-  },
+  pressed: { opacity: 0.7 },
 });

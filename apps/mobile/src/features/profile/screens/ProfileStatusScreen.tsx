@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { colors, controlHeights, radii, spacing, typography } from '@/design/theme';
 import { AuthMessage } from '@/features/auth/components/AuthMessage';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { mapAuthError } from '@/features/auth/services/authErrors';
@@ -62,8 +63,10 @@ export function ProfileStatusScreen({
               ? 'Your account is signed in, but no matching profile row was found.'
               : (errorMessage ?? 'Your profile could not be loaded.')}
           </Text>
-          <Text style={styles.details}>User id: {userId}</Text>
-          {errorCode ? <Text style={styles.details}>Error code: {errorCode}</Text> : null}
+          {__DEV__ ? <Text style={styles.details}>User id: {userId}</Text> : null}
+          {__DEV__ && errorCode ? (
+            <Text style={styles.details}>Error code: {errorCode}</Text>
+          ) : null}
         </View>
 
         {signOutError ? <AuthMessage message={signOutError} tone="error" /> : null}
@@ -99,68 +102,62 @@ export function ProfileStatusScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,
-    gap: 24,
+    gap: spacing.xl,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: spacing.xl,
   },
   kicker: {
-    color: '#b45309',
-    fontSize: 15,
-    fontWeight: '700',
-    marginBottom: 10,
+    ...typography.caption,
+    color: colors.warning,
+    marginBottom: spacing.sm,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 34,
-    fontWeight: '800',
-    lineHeight: 40,
-    marginBottom: 12,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   description: {
-    color: '#526057',
-    fontSize: 16,
-    lineHeight: 24,
+    ...typography.body,
+    color: colors.textSecondary,
   },
   details: {
-    color: '#6b746d',
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 10,
+    ...typography.micro,
+    color: colors.textMuted,
+    marginTop: spacing.xs,
   },
   actions: {
-    gap: 12,
+    gap: spacing.sm,
   },
   primaryButton: {
     alignItems: 'center',
-    backgroundColor: '#17211b',
-    borderRadius: 8,
+    backgroundColor: colors.accent,
+    borderRadius: radii.medium,
     justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.md,
   },
   primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '800',
+    ...typography.bodyStrong,
+    color: colors.accentText,
   },
   secondaryButton: {
     alignItems: 'center',
-    borderColor: '#c8d2c8',
-    borderRadius: 8,
+    backgroundColor: colors.surfaceInteractive,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.medium,
     borderWidth: 1,
     justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: 16,
+    minHeight: controlHeights.regular,
+    paddingHorizontal: spacing.md,
   },
   secondaryButtonText: {
-    color: '#17211b',
-    fontSize: 16,
-    fontWeight: '800',
+    ...typography.bodyStrong,
+    color: colors.textPrimary,
   },
   disabled: {
     opacity: 0.72,

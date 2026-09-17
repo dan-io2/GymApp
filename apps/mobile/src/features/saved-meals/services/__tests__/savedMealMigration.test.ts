@@ -43,4 +43,17 @@ describe('TASK-012 favorites and saved meals migration', () => {
     expect(migration).toContain('insert into public.food_logs');
     expect(migration).toContain('grant execute on function public.log_saved_meal');
   });
+
+  it('returns inserted food log rows from the saved meal RPC', () => {
+    const fixMigration = readFileSync(
+      join(
+        __dirname,
+        '../../../../../../../supabase/migrations/20260915090000_fix_log_saved_meal_returning.sql',
+      ),
+      'utf8',
+    );
+
+    expect(fixMigration).toContain('return query');
+    expect(fixMigration).toContain('returning food_logs.*;');
+  });
 });

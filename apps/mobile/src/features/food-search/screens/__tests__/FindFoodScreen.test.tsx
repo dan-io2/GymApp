@@ -158,7 +158,7 @@ describe('FindFoodScreen', () => {
 
     render(<FindFoodScreen />);
 
-    expect(screen.getByText('Source: Open Food Facts')).toBeTruthy();
+    expect(screen.getByText('Open Food Facts')).toBeTruthy();
     expect(screen.getByText('Chicken Breast')).toBeTruthy();
     expect(screen.getByText('Barcode: 012345678905')).toBeTruthy();
     expect(screen.getByText('Protein')).toBeTruthy();

@@ -210,6 +210,90 @@ describe('provider nutrition basis normalization', () => {
       servingUnit: 'g',
     });
   });
+
+  it('converts USDA mass servings expressed in ounces using the exact mass factor', () => {
+    expect(
+      normalizeUsdaSearchFood?.({
+        fdcId: 2646172,
+        description: 'USDA Ounce Food',
+        servingSize: 2,
+        servingSizeUnit: 'oz',
+        foodNutrients: [
+          { nutrientId: 1008, value: 200 },
+          { nutrientId: 1003, value: 20 },
+          { nutrientId: 1005, value: 30 },
+          { nutrientId: 1004, value: 5 },
+        ],
+      }),
+    ).toMatchObject({
+      servingBasis: 'per_serving',
+      servingSize: 2,
+      servingUnit: 'oz',
+    });
+
+    const normalized = normalizeUsdaSearchFood?.({
+      fdcId: 2646172,
+      description: 'USDA Ounce Food',
+      servingSize: 2,
+      servingSizeUnit: 'oz',
+      foodNutrients: [
+        { nutrientId: 1008, value: 200 },
+        { nutrientId: 1003, value: 20 },
+        { nutrientId: 1005, value: 30 },
+        { nutrientId: 1004, value: 5 },
+      ],
+    }) as { calories: number; proteinG: number; carbsG: number; fatG: number };
+
+    expect(normalized.calories).toBeCloseTo(113.398, 3);
+    expect(normalized.proteinG).toBeCloseTo(11.3398, 3);
+    expect(normalized.carbsG).toBeCloseTo(17.0097, 3);
+    expect(normalized.fatG).toBeCloseTo(2.83495, 3);
+  });
+
+  it('converts Open Food Facts per-100g values for an ounce serving exactly once', () => {
+    expect(
+      normalizeOpenFoodFactsProduct?.({
+        code: 'ounce-product',
+        product: {
+          code: 'ounce-product',
+          product_name: 'Ounce Product',
+          serving_quantity: 1,
+          serving_quantity_unit: 'oz',
+          nutriments: {
+            'energy-kcal_100g': 200,
+            proteins_100g: 20,
+            carbohydrates_100g: 30,
+            fat_100g: 5,
+          },
+        },
+      }),
+    ).toMatchObject({
+      servingBasis: 'per_serving',
+      servingSize: 1,
+      servingUnit: 'oz',
+    });
+
+    const normalized = normalizeOpenFoodFactsProduct?.({
+      code: 'ounce-product',
+      product: {
+        code: 'ounce-product',
+        product_name: 'Ounce Product',
+        serving_quantity: 1,
+        serving_quantity_unit: 'oz',
+        nutriments: {
+          'energy-kcal_100g': 200,
+          proteins_100g: 20,
+          carbohydrates_100g: 30,
+          fat_100g: 5,
+        },
+      },
+    }) as { calories: number; proteinG: number; carbsG: number; fatG: number };
+
+    expect(normalized.calories).toBeCloseTo(56.699, 3);
+    expect(normalized.proteinG).toBeCloseTo(5.6699, 3);
+    expect(normalized.carbsG).toBeCloseTo(8.5048, 3);
+    expect(normalized.fatG).toBeCloseTo(1.4175, 3);
+  });
 });
 
 function createQuestResponseWithServingNutrition() {

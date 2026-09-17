@@ -78,6 +78,12 @@ meal as a reusable saved meal, log saved meals through a database RPC, and log
 a previous diary row again from its immutable snapshot. Recipes and AI food
 recognition are intentionally not implemented yet.
 
+TASK-015.5 adds the v1 progress foundation: canonical weight check-ins,
+unit-aware history, local-calendar streaks and consistency, calendar/graph-ready
+data, deterministic monthly recap facts, device-local custom reminders, and
+manual custom-food creation through the existing diary snapshot flow. See
+`docs/PROGRESS_SYSTEM.md` for exact semantics and limitations.
+
 ## Tech Stack
 
 - React Native with Expo
@@ -439,6 +445,54 @@ pnpm dlx eas-cli@latest build --platform ios --profile development
 
 The app config includes the iOS camera permission message:
 `Allow GymApp to use your camera to scan food barcodes.`
+
+## EAS Distribution Builds
+
+GymApp has four EAS Build profiles:
+
+- `development`: internal development client for Metro-backed debugging
+- `development-simulator`: internal development client for the iOS Simulator
+- `preview`: standalone internal iOS build for friends, testers, and demos;
+  it does not require Metro, Expo Go, or the developer Mac after installation
+- `production`: store/TestFlight-ready configuration without the development
+  client; submission remains a separate manual command
+
+Preview and production builds use the deployed Supabase project through these
+EAS environment variables:
+
+```text
+EXPO_PUBLIC_SUPABASE_URL
+EXPO_PUBLIC_SUPABASE_ANON_KEY
+```
+
+Create those public variables in the EAS `preview` and `production`
+environments before building. Keep `FATSECRET_CLIENT_ID`,
+`FATSECRET_CLIENT_SECRET`, `USDA_FDC_API_KEY`, service-role keys, and database
+passwords in Supabase/server infrastructure only. They must never be EAS
+mobile variables or `EXPO_PUBLIC_*` values.
+
+Build the first standalone iOS preview version with:
+
+```sh
+cd GymApp
+pnpm mobile:build:preview
+```
+
+The root build scripts switch into the `apps/mobile` workspace before EAS
+resolves Expo configuration. This is required by the pnpm monorepo; do not run
+EAS from the repository root directly.
+
+EAS login and Apple signing are required. The first build may ask you to
+create or link the EAS project, register the iPhone, and configure Apple
+certificates. The finished installable build is independent of Metro and the
+developer Mac. Do not use `mobile:submit:ios` until TestFlight submission is
+intended.
+
+EAS Update is configured with the app-version runtime policy and preview /
+production channels, but no update has been published. JavaScript and asset
+changes can use EAS Update only when compatible with the installed native
+runtime. Native dependencies, permissions, Expo SDK changes, and native app
+configuration changes require a new build.
 
 ## Quality Checks
 

@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { colors, radii, spacing, typography } from '@/design/theme';
+
 import type { UnitSystem } from '../types/onboardingTypes';
 
 type UnitSystemToggleProps = {
@@ -56,36 +58,34 @@ function UnitOption({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#e7eee7',
-    borderRadius: 8,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.medium,
     flexDirection: 'row',
-    gap: 4,
-    padding: 4,
+    gap: spacing.xxs,
+    padding: spacing.xxs,
   },
   option: {
     alignItems: 'center',
-    borderRadius: 6,
+    borderRadius: radii.small,
     flex: 1,
     minHeight: 58,
     justifyContent: 'center',
   },
   selected: {
-    backgroundColor: '#1f8a5b',
+    backgroundColor: colors.surfaceInteractive,
   },
   pressed: {
     opacity: 0.88,
   },
   label: {
-    color: '#17211b',
-    fontSize: 16,
-    fontWeight: '800',
+    ...typography.bodyStrong,
+    color: colors.textSecondary,
   },
   selectedLabel: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   subtitle: {
-    color: '#526057',
-    fontSize: 13,
-    fontWeight: '700',
+    ...typography.caption,
+    color: colors.textMuted,
   },
 });

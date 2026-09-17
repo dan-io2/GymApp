@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AppCard, StatusPill } from '@/design/components';
+import { accents, colors, radii, spacing, typography } from '@/design/theme';
 import type { ActiveNutritionGoal, DashboardProfile } from '../types/dashboardTypes';
 import {
   formatActivityLabel,
@@ -22,8 +24,8 @@ export function GoalSummaryCard({ goal, profile }: GoalSummaryCardProps) {
   );
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.sectionTitle}>Current Goal</Text>
+    <AppCard style={styles.card}>
+      <StatusPill icon="navigate-outline" label="Current goal" tone="information" />
       <Text style={styles.goal}>{formatGoalLabel(goal.goalType)}</Text>
       <Text style={styles.context}>{getCalorieContext(goal)}</Text>
 
@@ -43,7 +45,7 @@ export function GoalSummaryCard({ goal, profile }: GoalSummaryCardProps) {
         {weeklyRate ? <Detail label="Rate" value={weeklyRate} /> : null}
         <Detail label="Activity" value={formatActivityLabel(goal.activityLevel)} />
       </View>
-    </View>
+    </AppCard>
   );
 }
 
@@ -58,54 +60,43 @@ function Detail({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
-    borderColor: '#dce5de',
-    borderRadius: 8,
-    borderWidth: 1,
-    padding: 18,
-  },
-  sectionTitle: {
-    color: '#1f8a5b',
-    fontSize: 14,
-    fontWeight: '900',
-    textTransform: 'uppercase',
+    backgroundColor: accents.analytics.surface,
+    borderColor: accents.analytics.muted,
+    borderLeftColor: accents.analytics.foreground,
+    borderLeftWidth: 2,
+    padding: spacing.md,
   },
   goal: {
-    color: '#17211b',
-    fontSize: 25,
-    fontWeight: '900',
-    lineHeight: 31,
-    marginTop: 10,
+    ...typography.sectionTitle,
+    color: colors.textPrimary,
+    marginTop: spacing.sm,
   },
   context: {
-    color: '#617067',
-    fontSize: 16,
-    fontWeight: '700',
-    lineHeight: 23,
-    marginTop: 6,
+    ...typography.secondary,
+    color: colors.textSecondary,
+    marginTop: spacing.xxs,
   },
   detailGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
-    marginTop: 18,
+    gap: spacing.xs,
+    marginTop: spacing.sm,
   },
   detail: {
-    backgroundColor: '#f7f8f3',
-    borderRadius: 8,
+    backgroundColor: colors.backgroundElevated,
+    borderRadius: radii.medium,
     minWidth: '47%',
-    padding: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   detailLabel: {
-    color: '#617067',
-    fontSize: 12,
-    fontWeight: '800',
+    ...typography.micro,
+    color: colors.textMuted,
     textTransform: 'uppercase',
   },
   detailValue: {
-    color: '#17211b',
-    fontSize: 16,
-    fontWeight: '900',
-    marginTop: 6,
+    ...typography.caption,
+    color: colors.textPrimary,
+    marginTop: spacing.xxs,
   },
 });

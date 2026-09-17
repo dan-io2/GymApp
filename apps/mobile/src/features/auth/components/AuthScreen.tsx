@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { colors, spacing, typography } from '@/design/theme';
+
 type AuthScreenProps = {
   title: string;
   subtitle: string;
@@ -67,7 +69,7 @@ export function AuthScreen({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f8f3',
+    backgroundColor: colors.background,
   },
   keyboardView: {
     flex: 1,
@@ -75,49 +77,44 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xxl,
   },
   header: {
-    marginBottom: 32,
+    marginBottom: spacing.xxl,
   },
   kicker: {
-    color: '#1f7a54',
-    fontSize: 15,
-    fontWeight: '700',
-    marginBottom: 10,
+    ...typography.caption,
+    color: colors.accent,
+    marginBottom: spacing.sm,
     textTransform: 'uppercase',
   },
   title: {
-    color: '#17211b',
-    fontSize: 34,
-    fontWeight: '800',
-    lineHeight: 40,
-    marginBottom: 12,
+    ...typography.screenTitle,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   subtitle: {
-    color: '#526057',
-    fontSize: 16,
-    lineHeight: 24,
+    ...typography.body,
+    color: colors.textSecondary,
   },
   footer: {
     alignItems: 'center',
-    gap: 8,
-    marginTop: 28,
+    gap: spacing.xs,
+    marginTop: spacing.xl,
   },
   footerText: {
-    color: '#526057',
-    fontSize: 15,
+    ...typography.secondary,
+    color: colors.textSecondary,
   },
   footerButton: {
     minHeight: 44,
     justifyContent: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.sm,
   },
   footerButtonText: {
-    color: '#1f7a54',
-    fontSize: 16,
-    fontWeight: '700',
+    ...typography.bodyStrong,
+    color: colors.accent,
   },
   pressed: {
     opacity: 0.7,

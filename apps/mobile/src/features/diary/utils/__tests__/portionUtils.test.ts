@@ -225,6 +225,20 @@ describe('portionUtils', () => {
 
     expect(portion.calories).toBeCloseTo(140 * servingEquivalent, 1);
   });
+
+  it('preserves linear nutrition scaling for a 2.25 serving quantity', () => {
+    const base = calculatePortionNutrition({ amount: 1, food: createQuestFood(), unit: 'serving' });
+    const scaled = calculatePortionNutrition({
+      amount: 2.25,
+      food: createQuestFood(),
+      unit: 'serving',
+    });
+
+    expect(scaled.calories).toBeCloseTo(base.calories * 2.25, 10);
+    expect(scaled.proteinG).toBeCloseTo(base.proteinG * 2.25, 10);
+    expect(scaled.carbsG).toBeCloseTo(base.carbsG * 2.25, 10);
+    expect(scaled.fatG).toBeCloseTo(base.fatG * 2.25, 10);
+  });
 });
 
 function createQuestFood(): Food {

@@ -9,6 +9,7 @@
     "plugins": [
       "expo-router",
       "expo-splash-screen",
+      "expo-notifications",
       [
         "expo-camera",
         {
@@ -19,13 +20,14 @@
       ]
     ],
     "ios": {
-      "bundleIdentifier": "com.dannyreyes.gymapp",
+      "bundleIdentifier": "com.dan.io.gymapp",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
+      "package": "com.dannyreyes.gymapp",
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
@@ -34,6 +36,12 @@
     },
     "web": {
       "bundler": "metro"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0cf0f0bf-2c4e-44f3-aed8-783c06cb820a"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     },
     "extra": {
       "router": {},

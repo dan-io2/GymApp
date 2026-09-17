@@ -109,9 +109,9 @@ function createUsdaFood({
     return null;
   }
 
-  const canConvertToServing =
-    servingSize !== null && servingUnit !== null && servingUnit.toLowerCase() === 'g';
-  const multiplier = canConvertToServing ? servingSize / 100 : 1;
+  const servingMassGrams = getMassInGrams(servingSize, servingUnit);
+  const canConvertToServing = servingMassGrams !== null;
+  const multiplier = canConvertToServing ? servingMassGrams / 100 : 1;
   const servingBasis = canConvertToServing ? 'per_serving' : 'per_100g';
 
   return {
@@ -123,20 +123,58 @@ function createUsdaFood({
     name,
     brand,
     servingSize: canConvertToServing ? servingSize : 100,
-    servingUnit: canConvertToServing ? servingUnit : 'g',
+    servingUnit: canConvertToServing ? normalizeServingUnit(servingUnit) : 'g',
     servingDescription: canConvertToServing
       ? (servingDescription ?? `${servingSize} ${servingUnit}`)
       : null,
     servingsPerContainer: null,
     servingBasis,
-    calories: roundNutrition(nutrients.calories * multiplier),
-    proteinG: roundNutrition(nutrients.proteinG * multiplier),
-    carbsG: roundNutrition(nutrients.carbsG * multiplier),
-    fatG: roundNutrition(nutrients.fatG * multiplier),
-    fiberG: nullableRound(scaleNullable(nutrients.fiberG, multiplier)),
-    sugarG: nullableRound(scaleNullable(nutrients.sugarG, multiplier)),
-    sodiumMg: nullableRound(scaleNullable(nutrients.sodiumMg, multiplier)),
+    calories: nutrients.calories * multiplier,
+    proteinG: nutrients.proteinG * multiplier,
+    carbsG: nutrients.carbsG * multiplier,
+    fatG: nutrients.fatG * multiplier,
+    fiberG: scaleNullable(nutrients.fiberG, multiplier),
+    sugarG: scaleNullable(nutrients.sugarG, multiplier),
+    sodiumMg: scaleNullable(nutrients.sodiumMg, multiplier),
   };
+}
+
+function getMassInGrams(size: number | null, unit: string | null): number | null {
+  if (size === null || unit === null) {
+    return null;
+  }
+
+  const normalizedUnit = normalizeServingUnit(unit);
+  const factor = {
+    g: 1,
+    kg: 1000,
+    oz: 28.349523125,
+    lb: 453.59237,
+  }[normalizedUnit];
+
+  return factor === undefined ? null : size * factor;
+}
+
+function normalizeServingUnit(unit: string | null): string {
+  const normalized = unit?.trim().toLowerCase();
+
+  if (normalized === 'gram' || normalized === 'grams') {
+    return 'g';
+  }
+
+  if (normalized === 'kilogram' || normalized === 'kilograms') {
+    return 'kg';
+  }
+
+  if (normalized === 'ounce' || normalized === 'ounces') {
+    return 'oz';
+  }
+
+  if (normalized === 'pound' || normalized === 'pounds') {
+    return 'lb';
+  }
+
+  return normalized ?? '';
 }
 
 function extractSearchNutrients(nutrients: UsdaSearchNutrient[]): NutrientValues {
@@ -194,14 +232,6 @@ function emptyNutrients(): NutrientValues {
   };
 }
 
-function nullableRound(value: number | null): number | null {
-  return value === null ? null : roundNutrition(value);
-}
-
 function scaleNullable(value: number | null, multiplier: number): number | null {
   return value === null ? null : value * multiplier;
-}
-
-function roundNutrition(value: number): number {
-  return Number(value.toFixed(2));
 }

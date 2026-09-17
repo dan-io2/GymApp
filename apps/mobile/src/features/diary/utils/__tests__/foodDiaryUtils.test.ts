@@ -3,6 +3,7 @@ import {
   aggregateDailyNutrition,
   assertValidMealType,
   calculateFoodLogSnapshot,
+  calculateNutritionProgress,
   calculateRemainingNutrition,
   filterLogsForLocalDate,
   getLocalDayRange,
@@ -163,6 +164,18 @@ describe('foodDiaryUtils', () => {
       carbsOverageG: 10,
       fatOverageG: 0,
     });
+  });
+
+  it('clamps progress visuals while retaining a true over-target ratio', () => {
+    const progress = calculateNutritionProgress(
+      { dailyCalories: 2000, proteinG: 100, carbsG: 100, fatG: 50 },
+      { caloriesConsumed: 2500, proteinConsumedG: 125, carbsConsumedG: 50, fatConsumedG: 25 },
+    );
+
+    expect(progress.calories.progressRatio).toBe(1);
+    expect(progress.calories.percentage).toBe(125);
+    expect(progress.protein.progressRatio).toBe(1);
+    expect(progress.protein.percentage).toBe(125);
   });
 });
 

@@ -54,13 +54,13 @@ export function normalizeOpenFoodFactsProduct(
     servingDescription: serving.description,
     servingsPerContainer: readPositiveNumber(product.number_of_servings),
     servingBasis: nutrition.servingBasis,
-    calories: roundNutrition(nutrition.calories),
-    proteinG: roundNutrition(nutrition.proteinG),
-    carbsG: roundNutrition(nutrition.carbsG),
-    fatG: roundNutrition(nutrition.fatG),
-    fiberG: nullableRound(nutrition.fiberG),
-    sugarG: nullableRound(nutrition.sugarG),
-    sodiumMg: nullableRound(nutrition.sodiumMg),
+    calories: nutrition.calories,
+    proteinG: nutrition.proteinG,
+    carbsG: nutrition.carbsG,
+    fatG: nutrition.fatG,
+    fiberG: nutrition.fiberG,
+    sugarG: nutrition.sugarG,
+    sodiumMg: nutrition.sodiumMg,
   };
 
   warnOnSuspiciousServingNutrition(normalized);
@@ -83,10 +83,12 @@ function getNutrition(
 
   const per100gNutrition = readNutritionForSuffix(nutriments, '100g');
 
-  if (hasRequiredNutrition(per100gNutrition) && serving.size !== null && serving.unit === 'g') {
+  const servingMassGrams = getMassInGrams(serving);
+
+  if (hasRequiredNutrition(per100gNutrition) && servingMassGrams !== null) {
     return {
       servingBasis: 'per_serving' as ServingBasis,
-      ...scaleNutrition(per100gNutrition, serving.size / 100),
+      ...scaleNutrition(per100gNutrition, servingMassGrams / 100),
     };
   }
 
@@ -158,7 +160,34 @@ function normalizeServingUnit(value: string | undefined): string | null {
     return 'ml';
   }
 
+  if (normalized === 'kilogram' || normalized === 'kilograms') {
+    return 'kg';
+  }
+
+  if (normalized === 'ounce' || normalized === 'ounces') {
+    return 'oz';
+  }
+
+  if (normalized === 'pound' || normalized === 'pounds') {
+    return 'lb';
+  }
+
   return normalized;
+}
+
+function getMassInGrams(serving: NormalizedServing): number | null {
+  if (serving.size === null || serving.unit === null) {
+    return null;
+  }
+
+  const factor = {
+    g: 1,
+    kg: 1000,
+    oz: 28.349523125,
+    lb: 453.59237,
+  }[serving.unit];
+
+  return factor === undefined ? null : serving.size * factor;
 }
 
 function normalizeText(value: string | undefined): string | null {
@@ -240,14 +269,6 @@ function readNutrient(
 
 function convertSodiumToMg(sodiumG: number | null): number | null {
   return sodiumG === null ? null : sodiumG * 1000;
-}
-
-function nullableRound(value: number | null): number | null {
-  return value === null ? null : roundNutrition(value);
-}
-
-function roundNutrition(value: number): number {
-  return Number(value.toFixed(2));
 }
 
 function warnOnSuspiciousServingNutrition(food: NormalizedFoodResult) {

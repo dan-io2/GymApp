@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { colors, radii, spacing, typography } from '@/design/theme';
+
 type OnboardingProgressProps = {
   currentStepIndex: number;
   totalSteps: number;
@@ -22,21 +24,20 @@ export function OnboardingProgress({ currentStepIndex, totalSteps }: OnboardingP
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
+    gap: spacing.xs,
   },
   label: {
-    color: '#526057',
-    fontSize: 14,
-    fontWeight: '700',
+    ...typography.caption,
+    color: colors.textMuted,
   },
   track: {
-    backgroundColor: '#dfe7df',
-    borderRadius: 999,
+    backgroundColor: colors.surfaceInteractive,
+    borderRadius: radii.capsule,
     height: 8,
     overflow: 'hidden',
   },
   fill: {
-    backgroundColor: '#1f8a5b',
+    backgroundColor: colors.accent,
     height: '100%',
   },
 });
