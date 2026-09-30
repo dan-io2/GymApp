@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   secondary: {
     backgroundColor: colors.surfaceInteractive,
     borderColor: colors.borderStrong,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   label: {
     ...typography.bodyStrong,

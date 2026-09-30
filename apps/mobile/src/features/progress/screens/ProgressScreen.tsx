@@ -321,8 +321,10 @@ function Metric({
   value: string;
 }) {
   return (
-    <AppCard style={[styles.metric, { backgroundColor: muted }]}>
-      <AppIcon color={color} name={icon} />
+    <AppCard style={[styles.metric, { borderTopColor: color }]}>
+      <View style={[styles.metricIcon, { backgroundColor: muted }]}>
+        <AppIcon color={color} name={icon} />
+      </View>
       <Text style={[styles.metricValue, { color }]}>{value}</Text>
       <Text style={styles.metricLabel}>{label}</Text>
     </AppCard>
@@ -354,7 +356,7 @@ function monthTitle(month: string): string {
 const styles = StyleSheet.create({
   safeArea: { backgroundColor: colors.background, flex: 1 },
   content: {
-    gap: spacing.lg,
+    gap: spacing.md,
     paddingBottom: 112,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
@@ -365,8 +367,8 @@ const styles = StyleSheet.create({
   loadingCard: { minHeight: 160, justifyContent: 'center' },
   muted: { ...typography.body, color: colors.textSecondary, textAlign: 'center' },
   weightHero: {
-    backgroundColor: accents.weight.surface,
-    borderColor: accents.weight.muted,
+    backgroundColor: colors.surfaceGlass,
+    borderColor: colors.borderSubtle,
     borderTopColor: accents.weight.foreground,
     borderTopWidth: 2,
     gap: spacing.sm,
@@ -412,7 +414,7 @@ const styles = StyleSheet.create({
   },
   saveButton: { minWidth: 104 },
   helper: { ...typography.micro, color: colors.textMuted },
-  sectionCard: { gap: spacing.md },
+  sectionCard: { gap: spacing.sm },
   rangeRow: {
     backgroundColor: colors.backgroundElevated,
     borderRadius: radii.medium,
@@ -430,12 +432,24 @@ const styles = StyleSheet.create({
   rangeText: { ...typography.micro, color: colors.textMuted, textTransform: 'uppercase' },
   rangeTextSelected: { color: accents.weight.foreground },
   metrics: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  metric: { borderColor: colors.transparent, flexBasis: '48%', gap: spacing.xs, minHeight: 108 },
+  metric: {
+    borderTopWidth: 2,
+    flexBasis: '48%',
+    gap: spacing.xs,
+    minHeight: 100,
+  },
+  metricIcon: {
+    alignItems: 'center',
+    borderRadius: radii.medium,
+    height: 34,
+    justifyContent: 'center',
+    width: 34,
+  },
   metricValue: { ...typography.metric, fontVariant: ['tabular-nums'] },
   metricLabel: { ...typography.caption, color: colors.textMuted },
   recapGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   recapMetric: {
-    backgroundColor: colors.backgroundElevated,
+    backgroundColor: colors.surfaceInteractive,
     borderRadius: radii.medium,
     flexBasis: '48%',
     gap: spacing.xxs,
@@ -452,7 +466,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     minHeight: 64,
   },
-  historyDivider: { borderColor: colors.borderSubtle, borderTopWidth: 1 },
+  historyDivider: { borderColor: colors.borderSubtle, borderTopWidth: StyleSheet.hairlineWidth },
   historyDate: { ...typography.bodyStrong, color: colors.textPrimary },
   historyRaw: { ...typography.micro, color: colors.textMuted },
   historyValue: { ...typography.cardTitle, color: colors.textPrimary },

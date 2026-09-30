@@ -18,11 +18,11 @@ export function AppCard({ children, raised = false, style, ...props }: AppCardPr
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceGlass,
     borderColor: colors.borderSubtle,
     borderRadius: radii.card,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     padding: spacing.md,
   },
-  raised: { backgroundColor: colors.surfaceRaised, borderColor: colors.borderStrong },
+  raised: { backgroundColor: colors.surfaceElevated, borderColor: colors.borderStrong },
 });

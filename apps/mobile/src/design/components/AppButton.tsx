@@ -60,12 +60,16 @@ const styles = StyleSheet.create({
   primary: { backgroundColor: colors.accent },
   secondary: {
     backgroundColor: colors.surfaceInteractive,
-    borderColor: colors.borderStrong,
-    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   ghost: { backgroundColor: colors.transparent },
-  danger: { backgroundColor: colors.dangerMuted, borderColor: colors.danger, borderWidth: 1 },
+  danger: {
+    backgroundColor: colors.dangerMuted,
+    borderColor: colors.dangerMuted,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   label: typography.bodyStrong,
-  pressed: { opacity: 0.76 },
+  pressed: { opacity: 0.78, transform: [{ scale: 0.985 }] },
   disabled: { opacity: 0.48 },
 });

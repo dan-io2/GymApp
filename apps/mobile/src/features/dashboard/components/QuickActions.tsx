@@ -76,10 +76,10 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   action: {
     alignItems: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceGlass,
     borderColor: colors.borderSubtle,
     borderRadius: radii.card,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     flexBasis: '48%',
     flexDirection: 'row',
     gap: spacing.sm,
@@ -95,5 +95,5 @@ const styles = StyleSheet.create({
     width: 36,
   },
   actionTitle: { ...typography.caption, color: colors.textPrimary, flexShrink: 1 },
-  pressed: { backgroundColor: colors.surfacePressed },
+  pressed: { backgroundColor: colors.surfacePressed, transform: [{ scale: 0.985 }] },
 });

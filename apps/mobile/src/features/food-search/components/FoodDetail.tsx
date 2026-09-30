@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceInteractive,
     borderColor: colors.borderStrong,
     borderRadius: radii.medium,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     justifyContent: 'center',
     minHeight: 44,
     paddingHorizontal: spacing.md,

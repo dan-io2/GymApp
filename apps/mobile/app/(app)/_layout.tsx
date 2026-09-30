@@ -1,6 +1,6 @@
 import { Redirect, Tabs } from 'expo-router';
 import { useEffect } from 'react';
-import { AppState } from 'react-native';
+import { AppState, StyleSheet } from 'react-native';
 import type { ColorValue } from 'react-native';
 
 import { AuthLoadingScreen } from '@/features/auth/components/AuthLoadingScreen';
@@ -84,10 +84,10 @@ export default function AppRoutesLayout() {
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: { ...typography.micro, marginTop: 2 },
         tabBarStyle: {
-          backgroundColor: colors.surfaceRaised,
-          borderColor: colors.borderStrong,
+          backgroundColor: colors.surfaceNavigation,
+          borderColor: colors.borderSubtle,
           borderRadius: radii.card,
-          borderTopWidth: 1,
+          borderWidth: StyleSheet.hairlineWidth,
           bottom: 8,
           height: 68,
           left: 16,
@@ -95,6 +95,10 @@ export default function AppRoutesLayout() {
           paddingTop: 8,
           position: 'absolute',
           right: 16,
+          shadowColor: '#000000',
+          shadowOffset: { height: -4, width: 0 },
+          shadowOpacity: 0.18,
+          shadowRadius: 14,
         },
       }}
     >

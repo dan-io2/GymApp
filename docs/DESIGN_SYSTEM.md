@@ -1,8 +1,9 @@
 # GymApp Design System
 
 GymApp uses a dark-first, iOS-oriented presentation layer. It is intentionally
-content-first: hierarchy comes from spacing, typography, subtle surface steps,
-and restrained borders rather than decorative gradients or heavy shadows.
+content-first: hierarchy comes from spacing, typography, translucent surface
+steps, and restrained borders rather than decorative gradients or heavy
+shadows.
 
 ## Source Of Truth
 
@@ -22,15 +23,21 @@ Reusable primitives are exported from `apps/mobile/src/design/components`:
 ## Color Semantics
 
 - `background` and `backgroundElevated` create the near-black app canvas.
-- `surface`, `surfaceRaised`, and `surfaceInteractive` establish quiet visual
-  depth for cards, controls, and selected controls.
+- `surfaceGlass`, `surfaceElevated`, `surfaceInteractive`, `surfaceSelected`,
+  and `surfaceNavigation` establish semantic depth for cards, controls,
+  selection, and the tab bar. The legacy `surface` aliases remain for feature
+  compatibility and resolve to the same translucent graphite system.
+- Standard cards use low-alpha graphite with a hairline highlight. Raised
+  surfaces are more opaque, while selection uses a subtle accent tint plus a
+  visible selected state. Color is not used as the sole state indicator.
 - `textPrimary`, `textSecondary`, and `textMuted` define readable hierarchy.
 - Mint remains GymApp's primary product and nutrition accent. It marks primary
   actions, active navigation, and nutrition progress.
 - Blue/cyan identifies weight and informational data; violet identifies
   analytics and consistency. Carbohydrate uses cyan and fat uses soft violet
   so compact macro cards are distinguishable without implying good or bad.
-- These accent families include foreground, muted, and dark surface tokens.
+- These accent families include foreground, muted, and very low-alpha tint
+  tokens.
   Most pixels remain neutral; color is reserved for focal metrics, icons,
   selected controls, progress, and occasional tinted feature surfaces.
 - `success`, `warning`, `danger`, and `information` are semantic states with
@@ -54,11 +61,13 @@ buttons and inputs at 52 points.
 
 ## Navigation
 
-The authenticated app uses an inset bottom tab bar with four durable primary
+The authenticated app uses a translucent inset bottom tab bar with four durable primary
 destinations: Today, Diary, Progress, and More. Food search, scanning, manual
 food, reminders, saved meals, onboarding, and goal editing are focused flows
 outside the persistent tab bar. Main tab screens reserve bottom space for the
-bar and respect safe areas.
+bar and respect safe areas. The navigation surface uses native RGBA compositing
+and a restrained shadow instead of a blur dependency, preserving the same
+rendering and performance profile in the existing iOS development client.
 
 ## Accessibility
 
@@ -79,7 +88,7 @@ fields wrap when necessary.
 
 ## Feedback And Motion
 
-Press feedback is a restrained opacity change. Motion tokens document quick,
+Press feedback is a restrained opacity and scale change. Motion tokens document quick,
 standard, and deliberate timings for future animation use; no decorative
 animation is required for a workflow to be understandable. Existing haptic
 feedback is retained only for meaningful successful actions, such as saving a

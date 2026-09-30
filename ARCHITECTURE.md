@@ -641,7 +641,10 @@ UI should display appropriate retry or correction actions.
 The mobile presentation layer is centralized under `apps/mobile/src/design`.
 `theme.ts` owns semantic dark-first tokens for surfaces, text, accent and
 status colors, typography, spacing, radii, icon sizes, control heights, and
-motion. Reusable primitives in `design/components` provide the consistent
+motion. Its surface hierarchy uses native RGBA graphite layers for glass,
+elevated, interactive, selected, and navigation contexts; standard containers
+use quiet hairline borders while accent borders are reserved for selection or
+meaningful state. Reusable primitives in `design/components` provide the consistent
 screen, card, button, input, icon, progress, status, section, and empty-state
 patterns used by feature screens.
 
@@ -654,7 +657,8 @@ and database behavior remain in their existing feature/domain modules.
 Visual accents are semantic rather than screen-local: emerald represents
 nutrition and primary actions, blue/cyan represents weight and information,
 violet represents analytics and consistency, amber represents attention, and
-red is reserved for errors or destructive actions. The weight trend chart is
+red is reserved for errors or destructive actions. Accent tints remain
+low-alpha so normal cards stay visually neutral. The weight trend chart is
 rendered from ordinary React Native views using presentation-only geometry;
 it intentionally has no SVG or native chart dependency. Recorded points are
 connected directly without interpolation or fabricated values.

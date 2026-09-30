@@ -16,6 +16,7 @@ describe('WeightTrendChart', () => {
 
     expect(geometry.positions).toHaveLength(1);
     expect(geometry.positions[0].x).toBe(150);
+    expect(geometry.positions[0].y).toBe(78);
     expect(geometry.segments).toHaveLength(0);
   });
 

@@ -27,10 +27,7 @@ export function MacroTargetCard({ label, progress }: MacroTargetCardProps) {
   return (
     <AppCard
       accessibilityLabel={`${label} consumed ${formatMacroGramsWithUnit(progress.consumed)} of ${formatMacroGramsWithUnit(progress.target)}, ${statusText}`}
-      style={[
-        styles.card,
-        { backgroundColor: palette.surface, borderTopColor: palette.foreground },
-      ]}
+      style={[styles.card, { borderTopColor: palette.foreground }]}
     >
       <Text style={[styles.label, { color: palette.foreground }]}>{label}</Text>
       <Text adjustsFontSizeToFit minimumFontScale={0.72} numberOfLines={1} style={styles.value}>

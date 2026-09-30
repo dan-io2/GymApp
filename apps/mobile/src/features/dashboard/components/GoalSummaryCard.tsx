@@ -60,8 +60,8 @@ function Detail({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: accents.analytics.surface,
-    borderColor: accents.analytics.muted,
+    backgroundColor: colors.surfaceGlass,
+    borderColor: colors.borderSubtle,
     borderLeftColor: accents.analytics.foreground,
     borderLeftWidth: 2,
     padding: spacing.md,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   detail: {
-    backgroundColor: colors.backgroundElevated,
+    backgroundColor: colors.surfaceInteractive,
     borderRadius: radii.medium,
     minWidth: '47%',
     paddingHorizontal: spacing.sm,

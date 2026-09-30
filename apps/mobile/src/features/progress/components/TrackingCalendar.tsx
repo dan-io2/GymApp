@@ -74,13 +74,13 @@ function formatDate(value: string): string {
 }
 
 const styles = StyleSheet.create({
-  calendar: { gap: spacing.sm },
+  calendar: { gap: spacing.xs },
   week: { flexDirection: 'row' },
   weekday: { ...typography.micro, color: colors.textMuted, textAlign: 'center', width: '14.285%' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: spacing.xxs },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 2 },
   day: {
     alignItems: 'center',
-    aspectRatio: 1,
+    height: 36,
     justifyContent: 'center',
     width: '14.285%',
   },

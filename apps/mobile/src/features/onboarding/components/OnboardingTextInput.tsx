@@ -54,10 +54,10 @@ const styles = StyleSheet.create({
   },
   inputRow: {
     alignItems: 'center',
-    backgroundColor: colors.surfaceRaised,
+    backgroundColor: colors.surfaceElevated,
     borderColor: colors.borderStrong,
     borderRadius: radii.medium,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
     minHeight: controlHeights.large,
     paddingHorizontal: spacing.sm,

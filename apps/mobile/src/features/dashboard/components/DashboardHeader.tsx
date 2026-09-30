@@ -45,10 +45,10 @@ const styles = StyleSheet.create({
   greeting: { ...typography.secondary, color: colors.textSecondary, marginTop: spacing.xxs },
   settingsButton: {
     alignItems: 'center',
-    backgroundColor: colors.surfaceRaised,
-    borderColor: colors.borderStrong,
+    backgroundColor: colors.surfaceElevated,
+    borderColor: colors.borderSubtle,
     borderRadius: radii.card,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     height: controlHeights.compact,
     justifyContent: 'center',
     width: controlHeights.compact,

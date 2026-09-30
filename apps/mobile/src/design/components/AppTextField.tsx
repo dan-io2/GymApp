@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
   label: { ...typography.caption, color: colors.textSecondary },
   input: {
     ...typography.body,
-    backgroundColor: colors.surfaceRaised,
+    backgroundColor: colors.surfaceElevated,
     borderColor: colors.borderStrong,
     borderRadius: radii.medium,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     color: colors.textPrimary,
     minHeight: controlHeights.regular,
     paddingHorizontal: spacing.md,

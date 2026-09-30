@@ -161,12 +161,12 @@ const styles = StyleSheet.create({
   row: {
     alignItems: 'center',
     borderBottomColor: colors.borderSubtle,
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
     gap: spacing.sm,
     minHeight: 58,
   },
-  rowPressed: { opacity: 0.6 },
+  rowPressed: { backgroundColor: colors.surfacePressed, opacity: 0.82 },
   rowIcon: {
     alignItems: 'center',
     borderRadius: radii.medium,

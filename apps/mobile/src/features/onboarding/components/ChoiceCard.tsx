@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.borderSubtle,
     borderRadius: radii.card,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
     gap: spacing.sm,
     justifyContent: 'space-between',

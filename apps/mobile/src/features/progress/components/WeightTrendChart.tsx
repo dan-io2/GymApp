@@ -36,13 +36,14 @@ export function buildWeightChartGeometry(
   const min = Math.min(...values);
   const max = Math.max(...values);
   const span = Math.max(max - min, 1);
+  const isFlat = max === min;
   const drawableWidth = Math.max(width - PADDING * 2, 1);
   const drawableHeight = height - PADDING * 2;
   const positions = points.map((point, index) => ({
     x:
       PADDING +
       (points.length === 1 ? drawableWidth / 2 : (index / (points.length - 1)) * drawableWidth),
-    y: PADDING + ((max - point.displayWeight) / span) * drawableHeight,
+    y: isFlat ? height / 2 : PADDING + ((max - point.displayWeight) / span) * drawableHeight,
   }));
   const segments = positions.slice(1).map((end, index) => {
     const start = positions[index];
@@ -148,10 +149,10 @@ function formatDate(value: string): string {
 
 const styles = StyleSheet.create({
   chart: {
-    backgroundColor: colors.weightSurface,
-    borderColor: colors.weightMuted,
+    backgroundColor: colors.surfaceElevated,
+    borderColor: colors.borderSubtle,
     borderRadius: radii.card,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     height: CHART_HEIGHT,
     overflow: 'hidden',
     position: 'relative',
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   point: {
-    backgroundColor: colors.weightSurface,
+    backgroundColor: colors.surfaceElevated,
     borderColor: colors.weight,
     borderWidth: 2,
     position: 'absolute',
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   latestLabel: { ...typography.micro, color: colors.weight, flexShrink: 1, textAlign: 'center' },
   empty: {
     alignItems: 'center',
-    backgroundColor: colors.weightSurface,
+    backgroundColor: colors.surfaceElevated,
     borderRadius: radii.card,
     gap: spacing.xs,
     paddingVertical: spacing.xxl,

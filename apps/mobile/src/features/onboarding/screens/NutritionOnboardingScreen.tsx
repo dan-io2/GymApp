@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.borderSubtle,
     borderRadius: radii.card,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     padding: spacing.md,
   },
   resultRow: {

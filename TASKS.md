@@ -410,6 +410,10 @@ Refined Today, Diary, Progress, and More surfaces while preserving their
 existing information architecture and frozen domain behavior. Replaced the
 weight graph's unlinked native SVG view with a dependency-free React Native
 line-and-point renderer, including zero-, one-, and multi-point coverage.
+Completed a follow-up premium surface pass with semantic translucent graphite
+levels, quieter hairline borders, neutral analytics cards, a denser monthly
+calendar, lighter diary hierarchy, and translucent inset navigation. No blur
+or additional native dependency was introduced.
 
 ---
 

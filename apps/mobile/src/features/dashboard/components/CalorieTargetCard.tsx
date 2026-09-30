@@ -56,8 +56,8 @@ export function CalorieTargetCard({ progress }: CalorieTargetCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: accents.nutrition.surface,
-    borderColor: accents.nutrition.muted,
+    backgroundColor: colors.surfaceGlass,
+    borderColor: colors.borderSubtle,
     borderTopColor: accents.nutrition.foreground,
     borderTopWidth: 2,
     gap: spacing.md,
